@@ -1,0 +1,7 @@
+{
+   "tabWidth": 3,
+   "arrowParens": "avoid",
+   "bracketSameLine": true,
+   "printWidth": 80,
+   "plugins": ["prettier-plugin-tailwindcss"]
+}
