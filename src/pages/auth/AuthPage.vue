@@ -10,8 +10,8 @@ const email = ref("");
 const password = ref("");
 const username = ref("");
 const { state } = useStore(key);
-
 const variant = ref<"LOGIN" | "REGISTER">("LOGIN");
+
 function submitForm(e: Event) {
    e.preventDefault();
    localStorage.setItem("token", "123");
