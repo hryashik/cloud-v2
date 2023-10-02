@@ -27,5 +27,9 @@ export const store = createStore<State>({
          };
          state.isAuth = true;
       },
+      logoutUser(state) {
+         state.isAuth = false;
+         state.user = undefined;
+      },
    },
 });

@@ -23,7 +23,7 @@ onBeforeMount(() => {
 
 <template>
    <Header v-if="state.isAuth" />
-   <RouterView class="px-4 py-4 lg:px-20"/>
+   <RouterView class="px-4 py-4 lg:px-16"/>
 </template>
 
 <style>

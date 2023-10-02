@@ -1,17 +1,27 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useStore } from "vuex";
+import { key } from "../store/store";
+
+const { commit } = useStore(key);
 const isActiveMenu = ref(false);
 const root = ref<HTMLUListElement>();
+
+const toggleMenu = () => (isActiveMenu.value = !isActiveMenu.value);
 function clickOnAvatar(event: Event) {
    event.stopPropagation();
-   isActiveMenu.value = true;
+   toggleMenu();
    const handler = (e: MouseEvent) => {
       if (e.target !== root.value) {
          isActiveMenu.value = false;
          document.body.removeEventListener("click", handler);
       }
    };
+
    document.body.addEventListener("click", handler);
+}
+function logout() {
+   commit("logoutUser");
 }
 </script>
 
@@ -20,7 +30,7 @@ function clickOnAvatar(event: Event) {
       <div
          class="mx-auto flex h-full max-w-sm items-center justify-between text-white md:max-w-2xl lg:max-w-5xl">
          <div>
-            <p class="text-lg">Navigation</p>
+            <p class="text-xl font-bold">CLOUD Service</p>
          </div>
          <div>
             <div
@@ -29,10 +39,12 @@ function clickOnAvatar(event: Event) {
                <div
                   class="absolute right-0 top-[56px] h-auto w-36 rounded-md bg-neutral-300"
                   v-show="isActiveMenu">
-                  <ul class="menu text-center text-black" ref="root">
+                  <ul
+                     class="menu select-none text-center text-black"
+                     ref="root">
                      <li>Settings</li>
                      <li>Dashboard</li>
-                     <li>Logout</li>
+                     <li @click="logout">Logout</li>
                   </ul>
                </div>
             </div>
