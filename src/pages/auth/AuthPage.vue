@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import MyInput from "../../components/ui/MyInput.vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { key } from "../../store/store";
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 const username = ref("");
+const { state } = useStore(key);
+
 const variant = ref<"LOGIN" | "REGISTER">("LOGIN");
 function submitForm(e: Event) {
    e.preventDefault();
-   console.log({
-      email: email.value,
-      password: password.value,
-      username: username.value,
-   });
+   localStorage.setItem("token", "123");
+   router.push("/");
 }
 function toggleVariant() {
    if (variant.value === "LOGIN") {
@@ -21,6 +24,12 @@ function toggleVariant() {
       variant.value = "LOGIN";
    }
 }
+
+onBeforeMount(() => {
+   if (state.isAuth) {
+      router.push("/");
+   }
+});
 </script>
 
 <template>
@@ -49,7 +58,7 @@ function toggleVariant() {
                <button
                   class="my-3 w-full rounded-md bg-emerald-500 p-3 text-lg text-black transition-colors hover:cursor-pointer active:bg-emerald-600"
                   type="submit">
-                  Sign in
+                  {{ variant === "LOGIN" ? "LOGIN" : "REGISTER" }}
                </button>
             </form>
             <div class="mt-6">
