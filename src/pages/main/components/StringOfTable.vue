@@ -4,36 +4,51 @@ import { FileType } from "../../../types/file";
 const { name, type, date, size, activeIds, id } = defineProps<
    FileType & { activeIds: string[] }
 >();
-const emit = defineEmits<{ (e: "clickOnFile", id: string): void }>();
+const emit = defineEmits<{
+   (e: "clickOnFile", id: string): void;
+   (e: "agree"): void;
+}>();
 function clickOnFile() {
-   emit("clickOnFile", id)
+   emit("clickOnFile", id);
 }
 </script>
 
 <template>
    <div
       @click="clickOnFile"
-      class="grid select-none grid-cols-4 justify-items-center hover:cursor-pointer text-lg py-2 relative"
-      :class="[activeIds.includes(id) ? 'bg-emerald-200 transition-colors' : '']">
-      <div class="ml-12 justify-self-start">
-         <img v-if="type === 'dir'" class="w-8 absolute bottom-2 left-1" src="assets/folder.png" alt="" >
-         <img v-else class="w-10 absolute bottom-1 left-0" src="assets/file-icon.png" alt="">
-         <p>{{ name }}</p>
+      class="main relative grid select-none justify-items-center py-2 text-lg hover:cursor-pointer"
+      :class="[
+         activeIds.includes(id) ? 'bg-emerald-200 transition-colors' : '',
+      ]">
+      <div class="flex items-center justify-self-start">
+         <img
+            v-if="type === 'dir'"
+            class="mr-2 w-10"
+            src="assets/folder.png"
+            alt="" />
+         <img v-else class="mr-2 w-10" src="assets/file-icon.png" alt="" />
+         <p class="break-all">
+            {{ name }}
+         </p>
       </div>
-      <div>
+      <div class="flex items-center">
          {{ type }}
       </div>
-      <div>
+      <div class="flex items-center">
          {{ date }}
       </div>
-      <div>
+      <div class="flex items-center">
          {{ size }}
       </div>
    </div>
 </template>
 
 <style scoped>
+.main {
+   grid-template-columns: 2fr 1fr 1fr 1fr;
+}
 .main > div {
-   border-right: 2px solid black;
+   display: flex;
+   justify-items: center;
 }
 </style>

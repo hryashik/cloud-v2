@@ -28,7 +28,7 @@ function logout() {
 <template>
    <header class="h-16 bg-emerald-500">
       <div
-         class="mx-auto flex h-full max-w-sm items-center justify-between text-white md:max-w-2xl lg:max-w-5xl">
+         class="mx-auto flex h-full items-center justify-between text-white px-4 lg:px-16">
          <div>
             <p class="text-xl font-bold">CLOUD Service</p>
          </div>

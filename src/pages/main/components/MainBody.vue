@@ -2,13 +2,27 @@
 import { ref } from "vue";
 import { FileType } from "../../../types/file.ts";
 import StringOfTable from "./StringOfTable.vue";
-import HeaderTable from "./ui/HeaderTable.vue";
+import HeaderTable from "./table/HeaderTable.vue";
+import MainBodyFooter from "./MainBodyFooter.vue";
+import MyModal from "../../../components/ui/MyModal.vue";
+import Table from "./table/Table.vue";
 
 const files = ref<FileType[]>([
-   { name: "myphoto", date: "10/10/10", size: "10MB", type: "jpg", id: "1" },
+   {
+      name: "myphotoaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      date: "10/10/10",
+      size: "10MB",
+      type: "jpg",
+      id: "1",
+   },
    { name: "sdasd", date: "10/10/10", size: "10MB", type: "dir", id: "2" },
 ]);
+
+const activeModal = ref(false);
 const activeIds = ref<string[]>([]);
+const currentPath = ref("/");
+const view = ref<"table" | "icons">("table");
+
 function setActive(id: string) {
    if (activeIds.value.includes(id)) {
       activeIds.value = activeIds.value.filter(el => el !== id);
@@ -16,10 +30,27 @@ function setActive(id: string) {
       activeIds.value.push(id);
    }
 }
+function deleteFilesHandler() {
+   activeModal.value = false;
+   files.value = files.value.filter(el => !activeIds.value.includes(el.id));
+   activeIds.value = [];
+}
+function toggleModal() {
+   activeModal.value = !activeModal.value;
+}
 </script>
 
 <template v-if="files">
-   <div class="mt-4">
+   <button @click="view = 'icons'">CHANGE VIEW</button>
+   <MyModal
+      :active="activeModal"
+      @close-modal="toggleModal"
+      @agree="deleteFilesHandler"
+      :text="'Delete this files?'" />
+   <div>
+      <span class="text-lg"><b>Path</b>: {{ currentPath }}</span>
+   </div>
+   <div class="mt-4" v-if="view === 'table'">
       <HeaderTable />
       <StringOfTable
          v-for="element of files"
@@ -31,16 +62,10 @@ function setActive(id: string) {
          :type="element.type"
          :active-ids="activeIds"
          @click-on-file="setActive" />
-      <div
-         v-if="activeIds.length"
-         class="fixed bottom-0 left-1/3 mb-4 flex w-1/3 items-center justify-between rounded-lg bg-indigo-300 px-8 py-4">
-         <p class="text-lg text-black">
-            Selected: <b>{{ activeIds.length }}</b> files
-         </p>
-         <div class="flex">
-            <p>Rename</p>
-            <p class="underline hover:cursor-pointer">Delete?</p>
-         </div>
-      </div>
+        <!--  <Table :files="files" :active-ids="activeIds"/> -->
    </div>
+   <MainBodyFooter
+      :active-ids="activeIds"
+      @cancel="activeIds = []"
+      @click-on-delete="activeModal = true" />
 </template>
