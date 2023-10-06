@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { FileType } from "../../../types/file.ts";
-import StringOfTable from "./StringOfTable.vue";
-import HeaderTable from "./table/HeaderTable.vue";
 import MainBodyFooter from "./MainBodyFooter.vue";
+import IconsView from "./icons/IconsView.vue";
 import MyModal from "../../../components/ui/MyModal.vue";
 import Table from "./table/Table.vue";
 
@@ -21,7 +20,7 @@ const files = ref<FileType[]>([
 const activeModal = ref(false);
 const activeIds = ref<string[]>([]);
 const currentPath = ref("/");
-const view = ref<"table" | "icons">("table");
+const view = ref<"table" | "icons">("icons");
 
 function setActive(id: string) {
    if (activeIds.value.includes(id)) {
@@ -41,7 +40,9 @@ function toggleModal() {
 </script>
 
 <template v-if="files">
-   <button @click="view = 'icons'">CHANGE VIEW</button>
+   <button @click="view === 'icons' ? (view = 'table') : (view = 'icons')">
+      CHANGE VIEW
+   </button>
    <MyModal
       :active="activeModal"
       @close-modal="toggleModal"
@@ -50,20 +51,17 @@ function toggleModal() {
    <div>
       <span class="text-lg"><b>Path</b>: {{ currentPath }}</span>
    </div>
-   <div class="mt-4" v-if="view === 'table'">
-      <HeaderTable />
-      <StringOfTable
-         v-for="element of files"
-         :key="element.id"
-         :id="element.id"
-         :name="element.name"
-         :date="element.date"
-         :size="element.size"
-         :type="element.type"
-         :active-ids="activeIds"
-         @click-on-file="setActive" />
-        <!--  <Table :files="files" :active-ids="activeIds"/> -->
-   </div>
+   <Table
+      v-if="view === 'table'"
+      class="mt-4"
+      :files="files"
+      :active-ids="activeIds"
+      @click-on-file="setActive" />
+   <IconsView
+      v-else
+      :files="files"
+      @click-on-file="setActive"
+      :active-ids="activeIds" />
    <MainBodyFooter
       :active-ids="activeIds"
       @cancel="activeIds = []"

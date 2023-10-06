@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { FileType } from "../../../../types/file";
+import StringOfTable from "./StringOfTable.vue";
 import HeaderTable from "./HeaderTable.vue";
 
 const { files, activeIds } = defineProps<{

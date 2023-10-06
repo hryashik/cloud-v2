@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount } from "vue";
+import { onBeforeMount, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { key } from "./store/store";
@@ -7,6 +7,17 @@ import Header from "./components/Header.vue";
 
 const router = useRouter();
 const { state, commit } = useStore(key);
+
+watch(
+   () => state.isAuth,
+   value => {
+      if (value === false) {
+         router.push("/auth");
+      } else {
+         router.push("/");
+      }
+   },
+);
 
 onBeforeMount(() => {
    const token = localStorage.getItem("token");
@@ -22,8 +33,8 @@ onBeforeMount(() => {
 </script>
 
 <template>
-      <Header v-if="state.isAuth" />
-      <RouterView class="px-4 py-4 lg:px-16" />
+   <Header v-if="state.isAuth" />
+   <RouterView class="px-4 py-4 lg:px-16" />
 </template>
 
 <style>

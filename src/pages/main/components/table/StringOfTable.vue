@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileType } from "../../../types/file";
+import { FileType } from "../../../../types/file";
 
 const { name, type, date, size, activeIds, id } = defineProps<
    FileType & { activeIds: string[] }
