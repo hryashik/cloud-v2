@@ -26,7 +26,7 @@ const clickOnFile = () => {
          "
          alt="" />
       <p
-         :class="activeIds ? 'bg-emerald-300 overflow-visible' : ''"
+         :class="activeIds ? 'overflow-visible bg-emerald-300' : ''"
          class="overflow-clip break-all">
          {{ file.name }}
       </p>
