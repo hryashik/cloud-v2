@@ -5,6 +5,7 @@ import MainBodyFooter from "./MainBodyFooter.vue";
 import IconsView from "./icons/IconsView.vue";
 import MyModal from "../../../components/ui/MyModal.vue";
 import Table from "./table/Table.vue";
+import ViewTab from "./ui/ViewTab.vue";
 
 const files = ref<FileType[]>([
    {
@@ -37,12 +38,13 @@ function deleteFilesHandler() {
 function toggleModal() {
    activeModal.value = !activeModal.value;
 }
+function toggleView() {
+   view.value === "icons" ? (view.value = "table") : (view.value = "icons");
+}
 </script>
 
 <template v-if="files">
-   <button @click="view === 'icons' ? (view = 'table') : (view = 'icons')">
-      CHANGE VIEW
-   </button>
+   <ViewTab :view="view" @change-view="toggleView"/>
    <MyModal
       :active="activeModal"
       @close-modal="toggleModal"
