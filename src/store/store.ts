@@ -20,16 +20,21 @@ export const store = createStore<State>({
       user: undefined,
    },
    mutations: {
-      defineUser(state, username: string) {
+      defineUser(
+         state,
+         { username, token }: { username: string; token: string },
+      ) {
          state.user = {
             username,
             avatar: null,
          };
          state.isAuth = true;
+         localStorage.setItem("Authorization", `Bearer ${token}`);
       },
       logoutUser(state) {
          state.isAuth = false;
          state.user = undefined;
+         localStorage.setItem("Authorization", "");
       },
    },
 });

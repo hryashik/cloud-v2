@@ -10,7 +10,7 @@ function clickHandler(str: "icons" | "table") {
 </script>
 
 <template>
-   <div class="inline-block">
+   <div class="inline-block select-none">
       <div class="flex hover:cursor-pointer">
          <div
             @click="clickHandler('icons')"

@@ -34,7 +34,7 @@ onBeforeMount(() => {
 
 <template>
    <div class="flex h-screen w-screen items-center justify-center">
-      <div class="w-1/4">
+      <div class="w-[400px]">
          <h2 class="mb-4 text-center text-3xl font-bold">
             Sign in to your account
          </h2>
