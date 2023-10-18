@@ -13,7 +13,6 @@ onBeforeMount(() => {
 </script>
 
 <template>
-   <notifications position="top center"/>
    <Header v-if="state.isAuth" />
    <RouterView class="px-4 py-4 lg:px-16" />
 </template>

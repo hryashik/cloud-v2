@@ -1,14 +1,11 @@
 import { InjectionKey } from "vue";
 import { createStore, Store } from "vuex";
+import { UserInfoType } from "../types/user";
 
 // define your typings for the store state
-type UserType = {
-   username: string;
-   avatar: string | null;
-};
 export interface State {
    isAuth: boolean;
-   user: UserType | undefined;
+   user: UserInfoType | undefined;
 }
 
 // define injection key
@@ -20,21 +17,14 @@ export const store = createStore<State>({
       user: undefined,
    },
    mutations: {
-      defineUser(
-         state,
-         { username, token }: { username: string; token: string },
-      ) {
-         state.user = {
-            username,
-            avatar: null,
-         };
+      defineUser(state, payload: UserInfoType) {
+         state.user = payload;
          state.isAuth = true;
-         localStorage.setItem("Authorization", `Bearer ${token}`);
       },
       logoutUser(state) {
          state.isAuth = false;
          state.user = undefined;
-         localStorage.setItem("Authorization", "");
+         localStorage.removeItem("Authorization");
       },
    },
 });

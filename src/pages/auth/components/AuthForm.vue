@@ -1,16 +1,36 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import MyInput from "../../../components/ui/MyInput.vue";
+import { useToast } from "vue-toastification";
+import { Form, useForm } from "vee-validate";
+import { object, string } from "yup";
 import { SignupDto } from "../../../services/types.dto";
-import apiService from "../../../services/apiService";
-import { useNotification } from "@kyvg/vue3-notification";
+import apiService, { ApiError } from "../../../services/apiService";
+import { useStore } from "vuex";
+import { key } from "../../../store/store";
 
-const email = ref("");
-const password = ref("");
-const username = ref("");
 const pending = ref<boolean>(false);
 const variant = ref<"LOGIN" | "REGISTER">("LOGIN");
-const { notify } = useNotification();
+const toast = useToast();
+const { commit } = useStore(key);
+
+const { values, defineInputBinds, errors, meta } = useForm({
+   validationSchema: object({
+      email: string()
+         .email()
+         .min(7, "Email must contain at least 7 symbols")
+         .required("Email is required"),
+      username: string()
+         .min(6, "Username must contain at least 6 symbols")
+         .notRequired(),
+      password: string()
+         .min(6, "Password must contain at least 6 symbols")
+         .required("Password is required"),
+   }),
+});
+const email = defineInputBinds("email");
+const password = defineInputBinds("password");
+const username = defineInputBinds("username");
 
 function toggleVariant() {
    if (variant.value === "LOGIN") {
@@ -20,46 +40,49 @@ function toggleVariant() {
    }
 }
 
-async function submitForm(e: Event) {
-   e.preventDefault();
-   pending.value = true;
-   // REGISTER VARIANT
-   if (variant.value === "REGISTER") {
-      const data: SignupDto = {
-         email: email.value,
-         password: password.value,
-         username: username.value,
-      };
-      const response = await apiService.signup(data);
-      notify({
-         type: "error",
-         title: "Error",
-         text: "asdasd"
-      });
+async function onSubmit() {
+   if (meta.value.valid) {
+      pending.value = true;
+      // REGISTER VARIANT
+      if (variant.value === "REGISTER") {
+         const data: SignupDto = {
+            email: values.email,
+            password: values.password,
+            username: values.username,
+         };
+         try {
+            const token = await apiService.signup(data);
+            localStorage.setItem("Authorization", `Bearer ${token}`);
+            const userData = await apiService.getUserInfo();
+            commit("defineUser", userData);
+         } catch (error) {
+            if (error instanceof ApiError) {
+               toast.error(error.message);
+            }
+         }
+      }
       pending.value = false;
-      console.log(response);
    }
 }
 </script>
 
 <template>
    <div class="flex flex-col rounded-md bg-white p-8 shadow-lg">
-      <form class="flex flex-col" @submit="submitForm">
+      <Form class="flex flex-col" @submit="onSubmit">
          <label class="mb-1" for="email">Email</label>
-         <MyInput
-            :type="'email'"
-            @change-value="(data: string) => (email = data)" />
+         <MyInput :type="'email'" v-bind="email" />
+         <p class="error__input">{{ errors.email }}</p>
          <label v-if="variant === 'REGISTER'" class="mb-1" for="email"
             >Username</label
          >
          <MyInput
             v-if="variant === 'REGISTER'"
             :type="'text'"
-            @change-value="(data: string) => (username = data)" />
+            v-bind="username" />
+         <p class="error__input">{{ errors.username }}</p>
          <label class="mb-1" for="password">Password</label>
-         <MyInput
-            :type="'password'"
-            @change-value="(data: string) => (password = data)" />
+         <MyInput :type="'password'" v-bind="password" />
+         <p class="error__input">{{ errors.password }}</p>
          <button
             :disabled="pending"
             :class="pending === true && 'bg-emerald-100 text-gray-400'"
@@ -67,7 +90,7 @@ async function submitForm(e: Event) {
             type="submit">
             {{ variant === "LOGIN" ? "LOGIN" : "REGISTER" }}
          </button>
-      </form>
+      </Form>
       <div class="mt-6">
          <div class="relative">
             <div class="absolute inset-0 flex items-center">
@@ -97,4 +120,9 @@ async function submitForm(e: Event) {
    </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.error__input {
+   color: rgb(209, 2, 2);
+   margin-bottom: 5px;
+}
+</style>
