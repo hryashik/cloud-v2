@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import Icon from "./Icon.vue";
-import { FileType } from "../../../../types/file";
-const { files, activeIds } = defineProps<{
-   files: FileType[];
+import { useStore } from "vuex";
+import { key } from "../../../../store/store";
+
+const { state } = useStore(key);
+
+const { activeIds } = defineProps<{
    activeIds: string[];
 }>();
 const emit = defineEmits<{ (e: "clickOnFile", payload: string): void }>();
@@ -11,9 +14,9 @@ const clickOnFileHandler = (payload: string) => emit("clickOnFile", payload);
 </script>
 
 <template>
-   <div class="mt-4 main">
+   <div class="main mt-4">
       <Icon
-         v-for="file of files"
+         v-for="file of state.files"
          :key="file.id"
          :file="file"
          @click-on-file="clickOnFileHandler"

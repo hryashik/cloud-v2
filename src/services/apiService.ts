@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
-import { SignupDto } from "./types.dto";
+import { LoginDto, SignupDto } from "./types.dto";
 import { UserInfoType } from "../types/user";
+import { FileType } from "../types/file";
 
 export class ApiError extends Error {
    statusCode: number;
@@ -41,13 +42,30 @@ class ApiService {
       }
    }
 
+   async login(loginData: LoginDto) {
+      try {
+         const { data } = await axios.post<{ token: string }>(
+            `${this.url}/auth/login`,
+            loginData,
+            { headers: { "Content-Type": "application/json" } },
+         );
+         return data.token;
+      } catch (e) {
+         if (e instanceof AxiosError) {
+            const statusCode = e.response?.status as number;
+            throw new ApiError("Credentials is wrong", statusCode);
+         }
+         throw new Error();
+      }
+   }
+
    async getUserInfo() {
       try {
-         const token = localStorage.getItem("Authorization");
+         const token = localStorage.getItem("auth-token");
          const { data } = await axios.get<UserInfoType>(
             `${this.url}/auth/user`,
             {
-               headers: { Authorization: token },
+               headers: { Authorization: `Bearer ${token}` },
             },
          );
          return data;
@@ -57,6 +75,21 @@ class ApiService {
             if (statusCode === 401) {
                throw new ApiError("Token is expired", 401);
             }
+         }
+         throw new Error();
+      }
+   }
+
+   async getAllFiles() {
+      try {
+         const token = localStorage.getItem("auth-token");
+         const { data } = await axios.get<FileType[]>(`${this.url}/files`, {
+            headers: { Authorization: `Bearer ${token}` },
+         });
+         return data;
+      } catch (error) {
+         if (error instanceof AxiosError) {
+            throw new ApiError("Files error", error.response?.status!!);
          }
          throw new Error();
       }

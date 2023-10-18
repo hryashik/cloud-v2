@@ -1,7 +1,11 @@
 export type FileType = {
-   name: string,
-   type: string,
-   size: string,
-   date: string,
-   id: string
-}
+   id: string;
+   name: string;
+   type: string;
+   size: number;
+   path: string;
+   createdAt: string;
+   updatedAt: string;
+   userId: string;
+   parentId: string;
+};

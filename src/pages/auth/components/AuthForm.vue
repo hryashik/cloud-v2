@@ -4,11 +4,13 @@ import MyInput from "../../../components/ui/MyInput.vue";
 import { useToast } from "vue-toastification";
 import { Form, useForm } from "vee-validate";
 import { object, string } from "yup";
-import { SignupDto } from "../../../services/types.dto";
+import { LoginDto, SignupDto } from "../../../services/types.dto";
 import apiService, { ApiError } from "../../../services/apiService";
 import { useStore } from "vuex";
 import { key } from "../../../store/store";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const pending = ref<boolean>(false);
 const variant = ref<"LOGIN" | "REGISTER">("LOGIN");
 const toast = useToast();
@@ -21,7 +23,7 @@ const { values, defineInputBinds, errors, meta } = useForm({
          .min(7, "Email must contain at least 7 symbols")
          .required("Email is required"),
       username: string()
-         .min(6, "Username must contain at least 6 symbols")
+         .min(4, "Username must contain at least 4 symbols")
          .notRequired(),
       password: string()
          .min(6, "Password must contain at least 6 symbols")
@@ -52,9 +54,28 @@ async function onSubmit() {
          };
          try {
             const token = await apiService.signup(data);
-            localStorage.setItem("Authorization", `Bearer ${token}`);
+            localStorage.setItem("auth-token", token);
             const userData = await apiService.getUserInfo();
             commit("defineUser", userData);
+            toast.success("You have been logged in");
+            router.push("/");
+         } catch (error) {
+            if (error instanceof ApiError) {
+               toast.error(error.message);
+            }
+         }
+      } else {
+         try {
+            const data: LoginDto = {
+               email: values.email,
+               password: values.password,
+            };
+            const token = await apiService.login(data);
+            localStorage.setItem("auth-token", token);
+            const userData = await apiService.getUserInfo();
+            commit("defineUser", userData);
+            toast.success("You have been logged in");
+            router.push("/");
          } catch (error) {
             if (error instanceof ApiError) {
                toast.error(error.message);

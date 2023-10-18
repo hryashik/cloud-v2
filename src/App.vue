@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { onBeforeMount } from "vue";
 import { useStore } from "vuex";
 import { key } from "./store/store";
 import Header from "./components/Header.vue";
+import { watch } from "vue";
+import { useRouter } from "vue-router";
 
-const {state} = useStore(key);
+const { state } = useStore(key);
+const router = useRouter();
 
-
-onBeforeMount(() => {
-   
-});
+watch(
+   () => state.isAuth,
+   newValue => {
+      if (newValue === false) {
+         router.push("/auth");
+      }
+   },
+);
 </script>
 
 <template>
