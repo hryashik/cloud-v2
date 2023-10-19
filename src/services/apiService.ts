@@ -123,6 +123,24 @@ class ApiService {
          }
       }
    }
+
+   async deleteFile(fileId: string) {
+      try {
+         const token = localStorage.getItem("auth-token");
+         const { data } = await axios.delete(`${this.url}/files/${fileId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+         });
+      } catch (error) {
+         if (error instanceof AxiosError) {
+            const statusCode = error.response?.status as number;
+            if (statusCode === 404) {
+               throw new ApiError("File does not exist", statusCode);
+            } else {
+               throw new ApiError("Invalid token", statusCode);
+            }
+         }
+      }
+   }
 }
 
 const apiService = new ApiService(import.meta.env.VITE_BASE_URL);

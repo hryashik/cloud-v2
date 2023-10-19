@@ -9,9 +9,12 @@ import { useStore } from "vuex";
 import { key } from "../../../store/store";
 import apiService from "../../../services/apiService";
 import { GET_ALL_FILES } from "../../../store/mutations-types";
+import { useToast } from "vue-toastification";
+import { DELETE_FILES_ACTION } from "../../../store/actions-types";
 
-const { state, commit } = useStore(key);
+const { commit, dispatch } = useStore(key);
 
+const toast = useToast();
 const activeModal = ref(false);
 const activeIds = ref<string[]>([]);
 const currentPath = ref("/");
@@ -29,11 +32,12 @@ function setActive(id: string) {
       activeIds.value.push(id);
    }
 }
-function deleteFilesHandler() {
-   /* activeModal.value = false;
-   files.value = files.value.filter(el => !activeIds.value.includes(el.id));
-   activeIds.value = []; */
+async function deleteFilesHandler() {
+   dispatch(DELETE_FILES_ACTION, activeIds.value).catch(() => toast.error("Delete was failed"))
+   activeModal.value = false;
+   activeIds.value = [];
 }
+
 function toggleModal() {
    activeModal.value = !activeModal.value;
 }

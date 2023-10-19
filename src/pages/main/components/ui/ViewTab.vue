@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 const props = defineProps<{ view: "icons" | "table" }>();
 const emit = defineEmits<{ (e: "changeView"): void }>();
 

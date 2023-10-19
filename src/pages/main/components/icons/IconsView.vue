@@ -14,7 +14,7 @@ const clickOnFileHandler = (payload: string) => emit("clickOnFile", payload);
 </script>
 
 <template>
-   <div class="main mt-4">
+   <div class="main mt-4" v-if="state.files.length">
       <Icon
          v-for="file of state.files"
          :key="file.id"
@@ -22,6 +22,7 @@ const clickOnFileHandler = (payload: string) => emit("clickOnFile", payload);
          @click-on-file="clickOnFileHandler"
          :activeIds="activeIds.includes(file.id)" />
    </div>
+   <div v-else class="text-center font-bold text-gray-500 h-80 flex items-center justify-center">Space is empty</div>
 </template>
 
 <style scoped>
