@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { useRoute } from "vue-router";
 import MyInput from "../../../components/ui/MyInput.vue";
+import { ref } from "vue";
+import CreateDirModal from "./ui/CreateDirModal.vue";
+
+const route = useRoute();
+const modalDirActive = ref<boolean>(false);
 
 function submitHandler(e: Event) {
    e.preventDefault();
@@ -26,6 +32,7 @@ function submitHandler(e: Event) {
 
 <template>
    <div class="tab__menu flex w-[500px] justify-between">
+      <CreateDirModal :active="modalDirActive" @close-modal="modalDirActive = false"/>
       <MyInput
          class="w-1/2 rounded-md shadow-md"
          :type="'text'"
@@ -34,21 +41,21 @@ function submitHandler(e: Event) {
          <label for="fileinput" class="block h-full cursor-pointer">
             <div
                class="border-grey flex h-full select-none items-center rounded-md shadow-md transition-colors active:bg-emerald-300">
-               <span class="px-4">Add files</span>
+               <span class="px-4">Upload files</span>
                <input
                   multiple
                   type="file"
                   id="fileinput"
                   class="hidden"
-                  accept="image/*, text/*, .json"
-                   />
+                  accept="image/*, text/*, .json" />
             </div>
          </label>
       </form>
 
       <button
+         @click="modalDirActive = true"
          class="mx-2 rounded-md bg-emerald-300 px-4 shadow-md transition-colors active:bg-emerald-400">
-         Remove
+         Create dir
       </button>
    </div>
 </template>

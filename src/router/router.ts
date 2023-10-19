@@ -7,7 +7,7 @@ import apiService from "../services/apiService";
 const router = createRouter({
    routes: [
       {
-         path: "/",
+         path: "/space",
          name: "main",
          component: Main,
          meta: {
@@ -26,19 +26,15 @@ const router = createRouter({
    history: createWebHistory(),
 });
 router.beforeEach(async (to, from, next) => {
-   const isAuthenticated = store.state.isAuth;
-   if (!isAuthenticated) {
-      const userInfo = await apiService.getUserInfo();
-      store.commit("defineUser", userInfo);
+   if (to.path === "/") {
+      next("/space");
+      return
    }
-
-   if (to.meta.requiresAuth && !isAuthenticated) {
-      next("/auth");
-   } else if (to.path === "/auth" && isAuthenticated) {
-      next("/");
-   } else {
-      next();
+   const isAuthenticated = store.state.isAuth
+   if (!isAuthenticated && to.meta.requiresAuth) {
+      return next("/auth")
    }
+   next();
 });
 
 export default router;

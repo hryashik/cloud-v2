@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FileType } from "../../../../types/file";
 
-const { name, type, date, size, activeIds, id } = defineProps<
+const { name, type, createdAt, size, activeIds, id } = defineProps<
    FileType & { activeIds: string[] }
 >();
 const emit = defineEmits<{
@@ -35,7 +35,7 @@ function clickOnFile() {
          {{ type }}
       </div>
       <div class="flex items-center">
-         {{ date }}
+         {{ createdAt }}
       </div>
       <div class="flex items-center">
          {{ size }}
