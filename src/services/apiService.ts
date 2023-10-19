@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { LoginDto, SignupDto } from "./types.dto";
+import { LoginDto, SignupDto, createDirDto } from "./types.dto";
 import { UserInfoType } from "../types/user";
 import { FileType } from "../types/file";
 
@@ -92,6 +92,35 @@ class ApiService {
             throw new ApiError("Files error", error.response?.status!!);
          }
          throw new Error();
+      }
+   }
+
+   async createDir(dirData: createDirDto) {
+      try {
+         const token = localStorage.getItem("auth-token");
+         const { data } = await axios.post<FileType>(
+            `${this.url}/files`,
+            dirData,
+            {
+               headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+               },
+            },
+         );
+         return data;
+      } catch (error) {
+         if (error instanceof AxiosError) {
+            const statusCode = error.response?.status as number;
+            if (statusCode === 401) {
+               throw new ApiError("Unauthorized", statusCode);
+            }
+            if (statusCode === 409) {
+               throw new ApiError("File with this name is exist", statusCode);
+            }
+         } else {
+            throw new Error();
+         }
       }
    }
 }

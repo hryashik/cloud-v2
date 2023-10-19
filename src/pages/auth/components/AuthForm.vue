@@ -58,7 +58,6 @@ async function onSubmit() {
             const userData = await apiService.getUserInfo();
             commit("defineUser", userData);
             toast.success("You have been logged in");
-            router.push("/space");
          } catch (error) {
             if (error instanceof ApiError) {
                toast.error(error.message);
@@ -75,7 +74,6 @@ async function onSubmit() {
             const userData = await apiService.getUserInfo();
             commit("defineUser", userData);
             toast.success("You have been logged in");
-            router.push("/");
          } catch (error) {
             if (error instanceof ApiError) {
                toast.error(error.message);

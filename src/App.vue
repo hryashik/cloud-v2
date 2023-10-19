@@ -11,7 +11,7 @@ const appIsReady = ref(false);
 const router = useRouter();
 
 onBeforeMount(async () => {
-   console.log(1)
+   console.log(1);
    try {
       const userInfo = await apiService.getUserInfo();
       commit("defineUser", userInfo);
@@ -24,8 +24,6 @@ watch(
    newValue => {
       if (newValue === false) {
          router.push("/auth");
-      } else {
-         router.push("/space")
       }
    },
 );

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from "vue";
+import { onBeforeMount, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { key } from "../../store/store";
@@ -8,9 +8,18 @@ import AuthForm from "./components/AuthForm.vue";
 const router = useRouter();
 const { state } = useStore(key);
 
-watch(() => state.isAuth, (newValue) => {
-   if (newValue === true) router.push("/space") 
-})
+onBeforeMount(() => {
+   if (state.isAuth) {
+      router.push("/space");
+   }
+});
+
+watch(
+   () => state.isAuth,
+   newValue => {
+      if (newValue === true) router.push("/space");
+   },
+);
 </script>
 
 <template>
