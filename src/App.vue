@@ -5,6 +5,7 @@ import Header from "./components/Header.vue";
 import { onBeforeMount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import apiService from "./services/apiService";
+import { DEFINE_USER } from "./store/mutations-types";
 
 const { state, commit } = useStore(key);
 const appIsReady = ref(false);
@@ -14,7 +15,7 @@ onBeforeMount(async () => {
    console.log(1);
    try {
       const userInfo = await apiService.getUserInfo();
-      commit("defineUser", userInfo);
+      commit(DEFINE_USER, userInfo);
    } catch (error) {}
    appIsReady.value = true;
 });

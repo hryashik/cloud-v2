@@ -4,11 +4,15 @@ import MyInput from "../../../components/ui/MyInput.vue";
 import { ref } from "vue";
 import CreateDirModal from "./ui/CreateDirModal.vue";
 import { useToast } from "vue-toastification";
-import apiService from "../../../services/apiService";
+import apiService, { ApiError } from "../../../services/apiService";
+import { createDirDto } from "../../../services/types.dto";
+import { useStore } from "vuex";
+import { key } from "../../../store/store";
+import { GET_FILES_ACTION } from "../../../store/actions-types";
 
 const route = useRoute();
 const toast = useToast();
-
+const { dispatch } = useStore(key);
 const modalDirActive = ref<boolean>(false);
 
 function submitHandler(e: Event) {
@@ -32,19 +36,30 @@ function submitHandler(e: Event) {
          .catch(e => console.log(e));
    }
 }
-async function createDir() {
-try {
-   const path = route.query
-   console.log(path)
-} catch (error) {
-   
-}
+async function createDir(name: string) {
+   try {
+      const path = route.query.path?.toString();
+      const data: createDirDto = {
+         name,
+         path,
+      };
+      await apiService.createDir(data);
+      modalDirActive.value = false;
+      dispatch(GET_FILES_ACTION);
+   } catch (error) {
+      if (error instanceof ApiError && error.statusCode === 409) {
+         toast.error(error.message);
+      }
+   }
 }
 </script>
 
 <template>
    <div class="tab__menu flex w-[500px] justify-between">
-      <CreateDirModal :active="modalDirActive" @close-modal="modalDirActive = false" @agree="createDir"/>
+      <CreateDirModal
+         :active="modalDirActive"
+         @close-modal="modalDirActive = false"
+         @agree="createDir" />
       <MyInput
          class="w-1/2 rounded-md shadow-md"
          :type="'text'"

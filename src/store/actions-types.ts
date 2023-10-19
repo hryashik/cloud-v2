@@ -1,0 +1,1 @@
+export const GET_FILES_ACTION = "GET_FILES_ACTION"

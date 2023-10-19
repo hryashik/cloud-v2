@@ -100,7 +100,7 @@ class ApiService {
          const token = localStorage.getItem("auth-token");
          const { data } = await axios.post<FileType>(
             `${this.url}/files`,
-            dirData,
+            { ...dirData, type: "dir" },
             {
                headers: {
                   Authorization: `Bearer ${token}`,

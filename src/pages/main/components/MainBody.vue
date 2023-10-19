@@ -8,6 +8,7 @@ import ViewTab from "./ui/ViewTab.vue";
 import { useStore } from "vuex";
 import { key } from "../../../store/store";
 import apiService from "../../../services/apiService";
+import { GET_ALL_FILES } from "../../../store/mutations-types";
 
 const { state, commit } = useStore(key);
 
@@ -18,7 +19,7 @@ const view = ref<"table" | "icons">("icons");
 
 onBeforeMount(async () => {
    const files = await apiService.getAllFiles();
-   commit("getAllFiles", files);
+   commit(GET_ALL_FILES, files);
 });
 
 function setActive(id: string) {
