@@ -3,6 +3,7 @@ import { createStore, Store } from "vuex";
 import { UserInfoType } from "../types/user";
 import { FileType } from "../types/file";
 import {
+   CHANGE_CURRENT_FOLDER,
    DEFINE_USER,
    DELETE_FILES,
    GET_ALL_FILES,
@@ -16,6 +17,7 @@ export interface State {
    isAuth: boolean;
    user: UserInfoType | undefined;
    files: FileType[];
+   currentDir: FileType | undefined;
 }
 
 // define injection key
@@ -26,6 +28,7 @@ export const store = createStore<State>({
       isAuth: false,
       user: undefined,
       files: [],
+      currentDir: undefined,
    },
    mutations: {
       [DEFINE_USER](state, payload: UserInfoType) {
@@ -47,6 +50,9 @@ export const store = createStore<State>({
       ["MUTATE_STATE"](state, payload: FileType[]) {
          state.files = payload;
       },
+      [CHANGE_CURRENT_FOLDER](state, payload: string) {
+         state.currentDir = state.files.find(file => file.path === payload);
+      },
    },
    actions: {
       async [GET_FILES_ACTION]({ commit }) {
@@ -63,7 +69,7 @@ export const store = createStore<State>({
             const promises = payload.map(id => apiService.deleteFile(id));
             await Promise.all(promises);
          } catch (e) {
-            console.error(e)
+            console.error(e);
             commit("MUTATE_STATE", files);
             throw Error("Delete was failed");
          }

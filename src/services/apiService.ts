@@ -98,8 +98,9 @@ class ApiService {
    async createDir(dirData: createDirDto) {
       try {
          const token = localStorage.getItem("auth-token");
+         const path = dirData.path || "";
          const { data } = await axios.post<FileType>(
-            `${this.url}/files`,
+            `${this.url}/files?path=${path}`,
             { ...dirData, type: "dir" },
             {
                headers: {

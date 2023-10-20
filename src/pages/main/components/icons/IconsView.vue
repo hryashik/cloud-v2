@@ -2,8 +2,31 @@
 import Icon from "./Icon.vue";
 import { useStore } from "vuex";
 import { key } from "../../../../store/store";
+import { useRoute } from "vue-router";
+import { computed, watch } from "vue";
+import { CHANGE_CURRENT_FOLDER } from "../../../../store/mutations-types";
 
-const { state } = useStore(key);
+const { state, commit } = useStore(key);
+const route = useRoute();
+
+watch(
+   () => route.query.path,
+   newValue => {
+      commit(CHANGE_CURRENT_FOLDER, newValue);
+   },
+);
+
+const currentFolder = computed(() => {
+   if (state.currentDir === undefined) {
+      return { files: state.files.filter(file => file.parentId === null) };
+   } else {
+      return {
+         files: state.files.filter(
+            file => file.parentId === state.currentDir?.id,
+         ),
+      };
+   }
+});
 
 const { activeIds } = defineProps<{
    activeIds: string[];
@@ -19,7 +42,7 @@ const clickOnFileHandler = (payload: { id: string; key?: boolean }) =>
 <template>
    <div class="main mt-4" v-if="state.files.length">
       <Icon
-         v-for="file of state.files"
+         v-for="file of currentFolder.files"
          :key="file.id"
          :file="file"
          @click-on-file="clickOnFileHandler"
