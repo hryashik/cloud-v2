@@ -8,9 +8,12 @@ const { state } = useStore(key);
 const { activeIds } = defineProps<{
    activeIds: string[];
 }>();
-const emit = defineEmits<{ (e: "clickOnFile", payload: string): void }>();
+const emit = defineEmits<{
+   (e: "clickOnFile", payload: { id: string; key?: boolean }): void;
+}>();
 
-const clickOnFileHandler = (payload: string) => emit("clickOnFile", payload);
+const clickOnFileHandler = (payload: { id: string; key?: boolean }) =>
+   emit("clickOnFile", payload);
 </script>
 
 <template>
@@ -22,7 +25,11 @@ const clickOnFileHandler = (payload: string) => emit("clickOnFile", payload);
          @click-on-file="clickOnFileHandler"
          :activeIds="activeIds.includes(file.id)" />
    </div>
-   <div v-else class="text-center font-bold text-gray-500 h-80 flex items-center justify-center">Space is empty</div>
+   <div
+      v-else
+      class="flex h-80 items-center justify-center text-center font-bold text-gray-500">
+      Space is empty
+   </div>
 </template>
 
 <style scoped>

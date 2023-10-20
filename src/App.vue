@@ -12,11 +12,12 @@ const appIsReady = ref(false);
 const router = useRouter();
 
 onBeforeMount(async () => {
-   console.log(1);
    try {
       const userInfo = await apiService.getUserInfo();
       commit(DEFINE_USER, userInfo);
-   } catch (error) {}
+   } catch (error) {
+      router.push("/auth");
+   }
    appIsReady.value = true;
 });
 

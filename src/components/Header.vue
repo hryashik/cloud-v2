@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { key } from "../store/store";
+import { LOGOUT_USER } from "../store/mutations-types";
 
 const { commit } = useStore(key);
 const isActiveMenu = ref(false);
@@ -21,7 +22,7 @@ function clickOnAvatar(event: Event) {
    document.body.addEventListener("click", handler);
 }
 function logout() {
-   commit("logoutUser");
+   commit(LOGOUT_USER);
 }
 </script>
 

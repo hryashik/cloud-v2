@@ -8,9 +8,8 @@ import { LoginDto, SignupDto } from "../../../services/types.dto";
 import apiService, { ApiError } from "../../../services/apiService";
 import { useStore } from "vuex";
 import { key } from "../../../store/store";
-import { useRouter } from "vue-router";
+import { DEFINE_USER } from "../../../store/mutations-types";
 
-const router = useRouter();
 const pending = ref<boolean>(false);
 const variant = ref<"LOGIN" | "REGISTER">("LOGIN");
 const toast = useToast();
@@ -72,7 +71,7 @@ async function onSubmit() {
             const token = await apiService.login(data);
             localStorage.setItem("auth-token", token);
             const userData = await apiService.getUserInfo();
-            commit("defineUser", userData);
+            commit(DEFINE_USER, userData);
             toast.success("You have been logged in");
          } catch (error) {
             if (error instanceof ApiError) {
