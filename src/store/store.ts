@@ -7,9 +7,14 @@ import {
    DEFINE_USER,
    DELETE_FILES,
    GET_ALL_FILES,
+   GO_BACK_PATH,
    LOGOUT_USER,
 } from "./mutations-types";
-import { DELETE_FILES_ACTION, GET_FILES_ACTION } from "./actions-types";
+import {
+   DELETE_FILES_ACTION,
+   GET_FILES_ACTION,
+   GO_BACK_PATH_ACTION,
+} from "./actions-types";
 import apiService from "../services/apiService";
 
 // define your typings for the store state
@@ -51,7 +56,16 @@ export const store = createStore<State>({
          state.files = payload;
       },
       [CHANGE_CURRENT_FOLDER](state, payload: string) {
-         state.currentDir = state.files.find(file => file.path === payload);
+         const dir = state.files.find(file => file.id === payload);
+         if (!dir) {
+            state.currentDir = state.files.find(file => file.path === payload);
+            return;
+         }
+         state.currentDir = dir;
+      },
+      [GO_BACK_PATH](state) {
+         const currId = state.currentDir?.parentId;
+         state.currentDir = state.files.find(file => file.id === currId);
       },
    },
    actions: {
@@ -73,6 +87,9 @@ export const store = createStore<State>({
             commit("MUTATE_STATE", files);
             throw Error("Delete was failed");
          }
+      },
+      async [GO_BACK_PATH_ACTION]({ commit }) {
+         commit(GO_BACK_PATH);
       },
    },
 });

@@ -2,19 +2,16 @@
 import Icon from "./Icon.vue";
 import { useStore } from "vuex";
 import { key } from "../../../../store/store";
-import { useRoute } from "vue-router";
-import { computed, watch } from "vue";
-import { CHANGE_CURRENT_FOLDER } from "../../../../store/mutations-types";
+import { computed } from "vue";
 
-const { state, commit } = useStore(key);
-const route = useRoute();
+const { state } = useStore(key);
 
-watch(
+/* watch(
    () => route.query.path,
    newValue => {
       commit(CHANGE_CURRENT_FOLDER, newValue);
    },
-);
+); */
 
 const currentFolder = computed(() => {
    if (state.currentDir === undefined) {

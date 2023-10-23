@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import { FileType } from "../../../../types/file";
+import { useStore } from "vuex";
+import { key } from "../../../../store/store";
+import { CHANGE_CURRENT_FOLDER } from "../../../../store/mutations-types";
 
-const router = useRouter();
+const {commit} = useStore(key)
 const { file, activeIds } = defineProps<{
    file: FileType;
    activeIds: boolean;
@@ -23,7 +25,7 @@ const clickOnFile = (e: MouseEvent) => {
 <template>
    <div
       @click="clickOnFile"
-      @dblclick="router.push(`space?path=${file.path}`)"
+      @dblclick="commit(CHANGE_CURRENT_FOLDER, file.id)"
       class="max-h-30 relative flex select-none flex-col items-center hover:cursor-pointer">
       <img
          :class="activeIds ? 'bg-emerald-200' : ''"
