@@ -16,6 +16,7 @@ import {
    GO_BACK_PATH_ACTION,
 } from "./actions-types";
 import apiService from "../services/apiService";
+import { SortType } from "../types/sortType";
 
 // define your typings for the store state
 export interface State {
@@ -23,6 +24,11 @@ export interface State {
    user: UserInfoType | undefined;
    files: FileType[];
    currentDir: FileType | undefined;
+   sortType: SortType;
+}
+
+export interface TodoGetters {
+   files(state: State): FileType[];
 }
 
 // define injection key
@@ -34,6 +40,12 @@ export const store = createStore<State>({
       user: undefined,
       files: [],
       currentDir: undefined,
+      sortType: "name",
+   },
+   getters: {
+      files: state => {
+         return state.files.sort();
+      },
    },
    mutations: {
       [DEFINE_USER](state, payload: UserInfoType) {

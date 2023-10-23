@@ -3,19 +3,17 @@ import Icon from "./Icon.vue";
 import { useStore } from "vuex";
 import { key } from "../../../../store/store";
 import { computed } from "vue";
+import { FileType } from "../../../../types/file";
 
-const { state } = useStore(key);
-
-/* watch(
-   () => route.query.path,
-   newValue => {
-      commit(CHANGE_CURRENT_FOLDER, newValue);
-   },
-); */
+const { state, getters } = useStore(key);
 
 const currentFolder = computed(() => {
    if (state.currentDir === undefined) {
-      return { files: state.files.filter(file => file.parentId === null) };
+      return {
+         files: getters.files.filter(
+            (file: FileType) => file.parentId === null,
+         ),
+      };
    } else {
       return {
          files: state.files.filter(
