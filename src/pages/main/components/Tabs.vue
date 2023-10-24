@@ -5,35 +5,38 @@ import { ref } from "vue";
 import CreateDirModal from "./ui/CreateDirModal.vue";
 import { useToast } from "vue-toastification";
 import apiService, { ApiError } from "../../../services/apiService";
-import { createDirDto } from "../../../services/types.dto";
+import { createDirDto, saveFilesDto } from "../../../services/types.dto";
 import { useStore } from "vuex";
 import { key } from "../../../store/store";
-import { GET_FILES_ACTION } from "../../../store/actions-types";
+import {
+   GET_FILES_ACTION,
+   SAVE_FILES_ACTION,
+} from "../../../store/actions-types";
 
 const route = useRoute();
 const toast = useToast();
 const { dispatch } = useStore(key);
 const modalDirActive = ref<boolean>(false);
 
-function submitHandler(e: Event) {
+async function submitHandler(e: Event) {
    e.preventDefault();
    const form = e.currentTarget as HTMLFormElement;
    const formdata = new FormData(form);
    const target = e.target as HTMLInputElement;
    const files = target.files;
    if (files) {
-      formdata.append("files", files[0], encodeURI(files[0].name));
-      const fetchOptions: RequestInit = {
-         method: "POST",
-         body: formdata,
-         headers: {
-            authorization:
-               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inp4Y0BtYWlsLnJ1IiwiaWF0IjoxNjk3MTA1NjM0LCJleHAiOjE2OTcxOTIwMzR9.XC0n959HdY5jYKdDo6JTrnE-Ief61C3fKrnz24aQix8",
-         },
-      };
-      fetch("http://localhost:3333/files", fetchOptions)
-         .then(data => console.log(data))
-         .catch(e => console.log(e));
+      try {
+         formdata.append("files", files[0], encodeURI(files[0].name));
+         const data: saveFilesDto = {
+            formData: formdata,
+            path: route.query.path?.toString(),
+         };
+         await dispatch(SAVE_FILES_ACTION, data);
+         toast.success("the file was saved successfully");
+      } catch (error) {
+         toast.error("Error")
+         console.log(error);
+      }
    }
 }
 async function createDir(name: string) {

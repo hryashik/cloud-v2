@@ -11,3 +11,7 @@ export type createDirDto = {
    name: string;
    path?: string
 }
+export type saveFilesDto = {
+   formData: FormData,
+   path?: string
+}

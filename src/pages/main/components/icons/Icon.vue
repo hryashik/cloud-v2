@@ -4,7 +4,7 @@ import { useStore } from "vuex";
 import { key } from "../../../../store/store";
 import { CHANGE_CURRENT_FOLDER } from "../../../../store/mutations-types";
 
-const {commit} = useStore(key)
+const { commit } = useStore(key);
 const { file, activeIds } = defineProps<{
    file: FileType;
    activeIds: boolean;
@@ -25,7 +25,9 @@ const clickOnFile = (e: MouseEvent) => {
 <template>
    <div
       @click="clickOnFile"
-      @dblclick="commit(CHANGE_CURRENT_FOLDER, file.id)"
+      @dblclick="
+         file.type === 'dir' ? commit(CHANGE_CURRENT_FOLDER, file.id) : ''
+      "
       class="max-h-30 relative flex select-none flex-col items-center hover:cursor-pointer">
       <img
          :class="activeIds ? 'bg-emerald-200' : ''"

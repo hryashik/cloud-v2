@@ -10,14 +10,17 @@ import {
    GET_ALL_FILES,
    GO_BACK_PATH,
    LOGOUT_USER,
+   SAVE_FILES,
 } from "./mutations-types";
 import {
    DELETE_FILES_ACTION,
    GET_FILES_ACTION,
    GO_BACK_PATH_ACTION,
+   SAVE_FILES_ACTION,
 } from "./actions-types";
 import apiService from "../services/apiService";
 import { SortType } from "../types/sortType";
+import { saveFilesDto } from "../services/types.dto";
 
 // define your typings for the store state
 export interface State {
@@ -45,20 +48,6 @@ export const store = createStore<State>({
    },
    getters: {
       files: state => {
-         /* switch (state.sortType) {
-            case "name":
-               return state.files.sort((a, b) => {
-                  const nameA = a.name;
-                  const nameB = b.name;
-                  if (nameA < nameB) {
-                     return -1;
-                  } else {
-                     return 1;
-                  }
-               });
-            default:
-               return state.files;
-         } */
          const sort = state.sortType;
          return state.files.sort((a, b) => {
             const sA = a[sort];
@@ -106,6 +95,9 @@ export const store = createStore<State>({
       [CHANGE_SORT](state, payload: SortType) {
          state.sortType = payload;
       },
+      [SAVE_FILES](state, payload: FileType) {
+         state.files.push(payload);
+      },
    },
    actions: {
       async [GET_FILES_ACTION]({ commit }) {
@@ -129,6 +121,13 @@ export const store = createStore<State>({
       },
       async [GO_BACK_PATH_ACTION]({ commit }) {
          commit(GO_BACK_PATH);
+      },
+      async [SAVE_FILES_ACTION]({ commit }, payload: saveFilesDto) {
+         try {
+            await apiService.saveFiles(payload);
+            const files = await apiService.getAllFiles();
+            commit(GET_ALL_FILES, files);
+         } catch (error) {}
       },
    },
 });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Tabs from "./components/Tabs.vue";
 import MainBody from "./components/MainBody.vue";
-import { onBeforeMount, ref, watch } from "vue";
+import { watch } from "vue";
 import { useStore } from "vuex";
 import { key } from "../../store/store";
 import { CHANGE_CURRENT_FOLDER } from "../../store/mutations-types";

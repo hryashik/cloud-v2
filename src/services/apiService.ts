@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { LoginDto, SignupDto, createDirDto } from "./types.dto";
+import { LoginDto, SignupDto, createDirDto, saveFilesDto } from "./types.dto";
 import { UserInfoType } from "../types/user";
 import { FileType } from "../types/file";
 
@@ -139,6 +139,26 @@ class ApiService {
             } else {
                throw new ApiError("Invalid token", statusCode);
             }
+         }
+      }
+   }
+
+   async saveFiles({ formData, path }: saveFilesDto) {
+      try {
+         const url = path
+            ? `${this.url}/files?path=${path}`
+            : `${this.url}/files`;
+         const { data } = await axios.post<string>(url, formData, {
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+               "Content-Type": "multipart/form-data",
+            },
+         });
+         return data;
+      } catch (error) {
+         if (error instanceof AxiosError) {
+            const statusCode = error.response?.status as number;
+            console.log(statusCode)
          }
       }
    }
