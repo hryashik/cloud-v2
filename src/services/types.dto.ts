@@ -15,3 +15,8 @@ export type saveFilesDto = {
    formData: FormData,
    path?: string
 }
+export type updateUserDto = {
+   email?: string;
+   username?: string;
+   avatar?: string
+}

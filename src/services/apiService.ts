@@ -1,5 +1,11 @@
 import axios, { AxiosError } from "axios";
-import { LoginDto, SignupDto, createDirDto, saveFilesDto } from "./types.dto";
+import {
+   LoginDto,
+   SignupDto,
+   createDirDto,
+   saveFilesDto,
+   updateUserDto,
+} from "./types.dto";
 import { UserInfoType } from "../types/user";
 import { FileType } from "../types/file";
 
@@ -158,8 +164,28 @@ class ApiService {
       } catch (error) {
          if (error instanceof AxiosError) {
             const statusCode = error.response?.status as number;
-            console.log(statusCode)
+            console.log(statusCode);
          }
+      }
+   }
+
+   async updateUserInfo(userData: updateUserDto) {
+      try {
+         const { data } = await axios.patch<UserInfoType>(`${this.url}/auth/user`, userData, {
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+            },
+         });
+         return data;
+      } catch (error) {
+         if (error instanceof AxiosError) {
+            const statusCode = error.response?.status as number;
+            if (statusCode === 401) throw new ApiError("Unauthorized", statusCode);
+            if (statusCode === 403) throw new ApiError("Credentials is taken", statusCode);
+         } else {
+            throw new Error("Some error")
+         }
+         throw new Error("")
       }
    }
 }

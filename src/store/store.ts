@@ -11,16 +11,18 @@ import {
    GO_BACK_PATH,
    LOGOUT_USER,
    SAVE_FILES,
+   UPDATE_USER_INFO,
 } from "./mutations-types";
 import {
    DELETE_FILES_ACTION,
    GET_FILES_ACTION,
    GO_BACK_PATH_ACTION,
    SAVE_FILES_ACTION,
+   UPDATE_USER_ACTION,
 } from "./actions-types";
 import apiService from "../services/apiService";
 import { SortType } from "../types/sortType";
-import { saveFilesDto } from "../services/types.dto";
+import { saveFilesDto, updateUserDto } from "../services/types.dto";
 
 // define your typings for the store state
 export interface State {
@@ -98,6 +100,9 @@ export const store = createStore<State>({
       [SAVE_FILES](state, payload: FileType) {
          state.files.push(payload);
       },
+      [UPDATE_USER_INFO](state, payload: UserInfoType) {
+         state.user = payload;
+      },
    },
    actions: {
       async [GET_FILES_ACTION]({ commit }) {
@@ -127,6 +132,12 @@ export const store = createStore<State>({
             await apiService.saveFiles(payload);
             const files = await apiService.getAllFiles();
             commit(GET_ALL_FILES, files);
+         } catch (error) {}
+      },
+      async [UPDATE_USER_ACTION]({ commit }, payload: updateUserDto) {
+         try {
+            const info = await apiService.updateUserInfo(payload);
+            commit(UPDATE_USER_INFO, info);
          } catch (error) {}
       },
    },

@@ -15,6 +15,7 @@ watch(
       }
    },
 );
+
 function modalHandler(e: MouseEvent) {
    e.stopPropagation();
    const target = e.target as HTMLElement;
