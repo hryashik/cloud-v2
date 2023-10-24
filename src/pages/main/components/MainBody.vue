@@ -10,7 +10,6 @@ import { useToast } from "vue-toastification";
 import { DELETE_FILES_ACTION } from "../../../store/actions-types";
 import PathComponent from "./ui/PathComponent.vue";
 import FilterSection from "./ui/FilterSection.vue";
-import { SortType } from "../../../types/sortType";
 
 const { dispatch } = useStore(key);
 
@@ -18,7 +17,6 @@ const toast = useToast();
 const activeModal = ref(false);
 const activeIds = ref<string[]>([]);
 const view = ref<"table" | "icons">("icons");
-const sortType = ref<SortType>("name");
 
 function setActive({ id, key }: { id: string; key?: boolean }) {
    if (activeIds.value.includes(id)) {
@@ -41,17 +39,12 @@ function toggleModal() {
 function toggleView() {
    view.value === "icons" ? (view.value = "table") : (view.value = "icons");
 }
-function toggleSort(payload: SortType) {
-   sortType.value = payload;
-}
 </script>
 
 <template v-if="files">
    <FilterSection
       :view="view"
-      @change-view="toggleView"
-      @change-sort="toggleSort"
-      :sort-type="sortType" />
+      @change-view="toggleView"/>
    <MyModal
       :active="activeModal"
       @close-modal="toggleModal"

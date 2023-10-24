@@ -6,7 +6,6 @@ import { computed } from "vue";
 import { FileType } from "../../../../types/file";
 
 const { state, getters } = useStore(key);
-
 const currentFolder = computed(() => {
    if (state.currentDir === undefined) {
       return {

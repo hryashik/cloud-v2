@@ -1,1 +1,1 @@
-export type SortType = "name" | "type" | "size" | "date";
+export type SortType = "name" | "type" | "size" | "updatedAt";

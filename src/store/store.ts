@@ -4,6 +4,7 @@ import { UserInfoType } from "../types/user";
 import { FileType } from "../types/file";
 import {
    CHANGE_CURRENT_FOLDER,
+   CHANGE_SORT,
    DEFINE_USER,
    DELETE_FILES,
    GET_ALL_FILES,
@@ -44,7 +45,30 @@ export const store = createStore<State>({
    },
    getters: {
       files: state => {
-         return state.files.sort();
+         /* switch (state.sortType) {
+            case "name":
+               return state.files.sort((a, b) => {
+                  const nameA = a.name;
+                  const nameB = b.name;
+                  if (nameA < nameB) {
+                     return -1;
+                  } else {
+                     return 1;
+                  }
+               });
+            default:
+               return state.files;
+         } */
+         const sort = state.sortType;
+         return state.files.sort((a, b) => {
+            const sA = a[sort];
+            const sB = b[sort];
+            if (sA < sB) {
+               return -1;
+            } else {
+               return 1;
+            }
+         });
       },
    },
    mutations: {
@@ -78,6 +102,9 @@ export const store = createStore<State>({
       [GO_BACK_PATH](state) {
          const currId = state.currentDir?.parentId;
          state.currentDir = state.files.find(file => file.id === currId);
+      },
+      [CHANGE_SORT](state, payload: SortType) {
+         state.sortType = payload;
       },
    },
    actions: {

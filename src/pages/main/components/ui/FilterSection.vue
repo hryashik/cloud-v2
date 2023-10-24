@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { useStore } from "vuex";
 import { SortType } from "../../../../types/sortType";
 import ViewTab from "./ViewTab.vue";
+import { key } from "../../../../store/store";
+import { CHANGE_SORT } from "../../../../store/mutations-types";
 
-const props = defineProps<{ view: "icons" | "table", sortType: SortType}>();
+const {state, commit} = useStore(key)
+const props = defineProps<{ view: "icons" | "table"}>();
 const emit = defineEmits<{
    (e: "changeView"): void;
    (e: "changeSort", sortType: SortType): void;
@@ -14,15 +18,15 @@ const handlerEmit = () => {
 const handlerSelect = (e: Event) => {
    const target = e.target as HTMLSelectElement;
    const value = target.value as SortType;
-   emit("changeSort", value)
+   commit(CHANGE_SORT, value)
 };
-</script>
+</script> 
 
 <template>
    <div class="flex items-start">
       <div class="mr-4">
          <select
-            :value="props.sortType"
+            :value="state.sortType"
             @change="handlerSelect"
             name=""
             id=""
@@ -30,7 +34,7 @@ const handlerSelect = (e: Event) => {
             <option value="name">By name</option>
             <option value="size">By size</option>
             <option value="type">By type</option>
-            <option value="date">By date</option>
+            <option value="updatedAt">By date</option>
          </select>
       </div>
       <div>
