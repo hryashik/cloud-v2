@@ -22,12 +22,6 @@ const currentFolder = computed(() => {
    }
 });
 
-const emit = defineEmits<{
-   (e: "clickOnFile", payload: { id: string; key?: boolean }): void;
-}>();
-
-const clickOnFileHandler = (payload: { id: string; key?: boolean }) =>
-   emit("clickOnFile", payload);
 </script>
 
 <template>
@@ -35,8 +29,7 @@ const clickOnFileHandler = (payload: { id: string; key?: boolean }) =>
       <Icon
          v-for="file of currentFolder.files"
          :key="file.id"
-         :file="file"
-         @click-on-file="clickOnFileHandler" />
+         :file="file" />
    </div>
    <div
       v-else

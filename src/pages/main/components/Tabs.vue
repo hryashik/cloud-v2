@@ -77,7 +77,7 @@ async function createDir(name: string) {
                   type="file"
                   id="fileinput"
                   class="hidden"
-                  accept="image/*, text/*, .json" />
+                  accept="image/*, text/*, .json, .pdf" />
             </div>
          </label>
       </form>

@@ -85,7 +85,7 @@ async function onSubmit(e: Event) {
             </p>
             <label for="settingsavatar">Avatar link</label>
             <input type="text" class="px-2 py-1" v-model="avatar" id="settingsavatar"/>
-            <button class="rounded-md bg-indigo-400 p-4">save</button>
+            <button class="rounded-md bg-emerald-400 p-4 active:bg-emerald-500">Save</button>
          </div>
       </form>
    </dialog>

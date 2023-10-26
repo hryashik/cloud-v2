@@ -11,9 +11,6 @@ const { commit, state } = useStore(key);
 const { file } = defineProps<{
    file: FileType;
 }>();
-const emit = defineEmits<{
-   (e: "clickOnFile", payload: { id: string; key?: boolean }): void;
-}>();
 
 const clickOnFile = (e: MouseEvent) => {
    if (e.altKey) {
@@ -39,8 +36,8 @@ const clickOnFile = (e: MouseEvent) => {
          "
          alt="" />
       <p
-         :class="state.selectedFiles.includes(file.id)? 'overflow-visible bg-emerald-300' : ''"
-         class="overflow-hidden rounded-md p-1">
+         :class="state.selectedFiles.includes(file.id)? 'overflow-visible bg-emerald-300 h-auto' : ''"
+         class="overflow-hidden rounded-md p-1 h-14 break-all">
          {{ file.name }}
       </p>
    </div>
