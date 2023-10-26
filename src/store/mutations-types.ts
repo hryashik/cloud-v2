@@ -7,3 +7,5 @@ export const GO_BACK_PATH = "GO_BACK_PATH";
 export const CHANGE_SORT = "CHANGE_SORT";
 export const SAVE_FILES = "SAVE_FILES";
 export const UPDATE_USER_INFO = "UPDATE_USER_INFO";
+export const SELECT_FILE = "SELECT_FILE";
+export const CLEAR_SELECTED_FILES = "CLEAR_SELECTED_FILES";

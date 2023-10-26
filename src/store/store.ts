@@ -5,12 +5,14 @@ import { FileType } from "../types/file";
 import {
    CHANGE_CURRENT_FOLDER,
    CHANGE_SORT,
+   CLEAR_SELECTED_FILES,
    DEFINE_USER,
    DELETE_FILES,
    GET_ALL_FILES,
    GO_BACK_PATH,
    LOGOUT_USER,
    SAVE_FILES,
+   SELECT_FILE,
    UPDATE_USER_INFO,
 } from "./mutations-types";
 import {
@@ -31,6 +33,7 @@ export interface State {
    files: FileType[];
    currentDir: FileType | undefined;
    sortType: SortType;
+   selectedFiles: string[];
 }
 
 export interface TodoGetters {
@@ -47,6 +50,7 @@ export const store = createStore<State>({
       files: [],
       currentDir: undefined,
       sortType: "name",
+      selectedFiles: [],
    },
    getters: {
       files: state => {
@@ -76,8 +80,9 @@ export const store = createStore<State>({
       [GET_ALL_FILES](state, payload: FileType[]) {
          state.files = payload;
       },
-      [DELETE_FILES](state, payload: string[]) {
-         state.files = state.files.filter(file => !payload.includes(file.id));
+      [DELETE_FILES](state) {
+         state.files = state.files.filter(file => !state.selectedFiles.includes(file.id));
+         state.selectedFiles = [];
       },
       ["MUTATE_STATE"](state, payload: FileType[]) {
          state.files = payload;
@@ -103,6 +108,17 @@ export const store = createStore<State>({
       [UPDATE_USER_INFO](state, payload: UserInfoType) {
          state.user = payload;
       },
+      [SELECT_FILE](state, { id, key }: { id: string; key?: boolean }) {
+         if (state.selectedFiles.includes(id)) {
+            state.selectedFiles = state.selectedFiles.filter(el => el !== id);
+         } else {
+            if (key) state.selectedFiles.push(id);
+            else state.selectedFiles = [id];
+         }
+      },
+      [CLEAR_SELECTED_FILES](state) {
+         state.selectedFiles = [];
+      },
    },
    actions: {
       async [GET_FILES_ACTION]({ commit }) {
@@ -114,8 +130,7 @@ export const store = createStore<State>({
       async [DELETE_FILES_ACTION]({ commit, state }, payload: string[]) {
          const files = state.files;
          try {
-            commit(DELETE_FILES, payload);
-
+            commit(DELETE_FILES);
             const promises = payload.map(id => apiService.deleteFile(id));
             await Promise.all(promises);
          } catch (e) {

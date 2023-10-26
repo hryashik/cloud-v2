@@ -22,9 +22,6 @@ const currentFolder = computed(() => {
    }
 });
 
-const { activeIds } = defineProps<{
-   activeIds: string[];
-}>();
 const emit = defineEmits<{
    (e: "clickOnFile", payload: { id: string; key?: boolean }): void;
 }>();
@@ -39,8 +36,7 @@ const clickOnFileHandler = (payload: { id: string; key?: boolean }) =>
          v-for="file of currentFolder.files"
          :key="file.id"
          :file="file"
-         @click-on-file="clickOnFileHandler"
-         :activeIds="activeIds.includes(file.id)" />
+         @click-on-file="clickOnFileHandler" />
    </div>
    <div
       v-else

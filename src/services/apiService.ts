@@ -188,6 +188,7 @@ class ApiService {
          throw new Error("")
       }
    }
+
 }
 
 const apiService = new ApiService(import.meta.env.VITE_BASE_URL);

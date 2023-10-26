@@ -6,10 +6,6 @@ import { key } from "../../../../store/store";
 
 const {state} = useStore(key)
 
-const { activeIds } = defineProps<{
-   activeIds: string[];
-}>();
-
 const emit = defineEmits<{ (e: "clickOnFile", payload: string): void }>();
 function setActive(payload: string) {
    emit("clickOnFile", payload);

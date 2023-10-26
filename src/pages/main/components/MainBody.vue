@@ -11,27 +11,17 @@ import { DELETE_FILES_ACTION } from "../../../store/actions-types";
 import PathComponent from "./ui/PathComponent.vue";
 import FilterSection from "./ui/FilterSection.vue";
 
-const { dispatch } = useStore(key);
+const { dispatch, state } = useStore(key);
 
 const toast = useToast();
 const activeModal = ref(false);
-const activeIds = ref<string[]>([]);
 const view = ref<"table" | "icons">("icons");
 
-function setActive({ id, key }: { id: string; key?: boolean }) {
-   if (activeIds.value.includes(id)) {
-      activeIds.value = activeIds.value.filter(el => el !== id);
-   } else {
-      if (key) activeIds.value.push(id);
-      else activeIds.value = [id];
-   }
-}
 async function deleteFilesHandler() {
-   dispatch(DELETE_FILES_ACTION, activeIds.value).catch(() =>
+   dispatch(DELETE_FILES_ACTION, state.selectedFiles).catch(() =>
       toast.error("Delete was failed"),
    );
    activeModal.value = false;
-   activeIds.value = [];
 }
 function toggleModal() {
    activeModal.value = !activeModal.value;
@@ -51,10 +41,8 @@ function toggleView() {
       @agree="deleteFilesHandler"
       :text="'Delete this files?'" />
    <PathComponent />
-   <Table v-if="view === 'table'" class="mt-4" :active-ids="activeIds" />
-   <IconsView v-else @click-on-file="setActive" :active-ids="activeIds" />
+   <Table v-if="view === 'table'" class="mt-4" />
+   <IconsView v-else />
    <MainBodyFooter
-      :active-ids="activeIds"
-      @cancel="activeIds = []"
       @click-on-delete="activeModal = true" />
 </template>

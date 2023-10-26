@@ -1,32 +1,62 @@
 <script setup lang="ts">
-const { activeIds } = defineProps<{ activeIds: string[] }>();
+import { ref } from "vue";
+import { useStore } from "vuex";
+import { key } from "../../../store/store";
+import { CLEAR_SELECTED_FILES } from "../../../store/mutations-types";
+
+const { state, commit } = useStore(key);
+const link = ref<HTMLLinkElement>();
 const emit = defineEmits<{
-   (e: "cancel"): void;
    (e: "click-on-delete"): void;
 }>();
 
 function clickOnCancel() {
-   emit("cancel");
+   commit(CLEAR_SELECTED_FILES);
 }
 function clickOnDelete() {
    emit("click-on-delete");
+}
+async function download() {
+   const response = await fetch("http://localhost:3333/files/upload", {
+      method: "POST",
+      body: JSON.stringify({ files: state.selectedFiles }),
+      headers: {
+         authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+         "content-type": "application/json",
+      },
+   });
+
+   if (response.status === 200) {
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      if (!link.value) throw new Error();
+      link.value.href = downloadUrl;
+      link.value.click();
+      link.value.remove();
+   }
 }
 </script>
 
 <template>
    <div
-      v-if="activeIds.length"
-      class="fixed bottom-0 left-1/2 mb-4 flex sm:w-[500px] w-[300px] -translate-x-1/2 items-center justify-between rounded-lg bg-indigo-300 px-2 py-2 sm:px-4 sm:py-3">
+      v-if="state.selectedFiles.length"
+      class="fixed bottom-0 left-1/2 mb-4 flex w-[300px] -translate-x-1/2 items-center justify-between rounded-lg bg-indigo-300 px-2 py-2 sm:w-[500px] sm:px-4 sm:py-3">
       <div>
          <p class="text-lg text-black">
-            Selected: <b>{{ activeIds.length }}</b> files
+            Selected: <b>{{ state.selectedFiles.length }}</b> files
          </p>
       </div>
-      <div class="sm:flex-none flex">
+      <div class="flex sm:flex-none">
+         <a ref="link"></a>
          <button
             @click="clickOnCancel"
-            class="hover:cursor-pointe px-2 py-1 text-lg text-white transition-colors mr-2">
+            class="hover:cursor-pointe mr-2 px-2 py-1 text-lg text-white transition-colors">
             Cancel
+         </button>
+         <button
+            @click="download"
+            class="hover:cursor-pointe mr-2 px-2 py-1 text-lg text-white transition-colors">
+            Download
          </button>
          <button
             @click="clickOnDelete"
