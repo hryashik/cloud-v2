@@ -6,6 +6,7 @@ import { computed } from "vue";
 import { FileType } from "../../../../types/file";
 
 const { state, getters } = useStore(key);
+const emit = defineEmits<{ (e: "openFile", payload: string): void }>();
 const currentFolder = computed(() => {
    if (state.currentDir === undefined) {
       return {
@@ -21,7 +22,6 @@ const currentFolder = computed(() => {
       };
    }
 });
-
 </script>
 
 <template>
@@ -29,7 +29,8 @@ const currentFolder = computed(() => {
       <Icon
          v-for="file of currentFolder.files"
          :key="file.id"
-         :file="file" />
+         :file="file"
+         @open-file="payload => emit('openFile', payload)" />
    </div>
    <div
       v-else

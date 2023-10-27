@@ -11,6 +11,7 @@ const { commit, state } = useStore(key);
 const { file } = defineProps<{
    file: FileType;
 }>();
+const emit = defineEmits<{ (e: "openFile", payload: string): void }>();
 
 const clickOnFile = (e: MouseEvent) => {
    if (e.altKey) {
@@ -19,13 +20,17 @@ const clickOnFile = (e: MouseEvent) => {
       commit(SELECT_FILE, { id: file.id });
    }
 };
+const openFile = () => {
+   emit("openFile", file.id);
+};
+
 </script>
 
 <template>
    <div
       @click="clickOnFile"
       @dblclick="
-         file.type === 'dir' ? commit(CHANGE_CURRENT_FOLDER, file.id) : ''
+         file.type === 'dir' ? commit(CHANGE_CURRENT_FOLDER, file.id) : openFile()
       "
       class="max-h-30 relative flex select-none flex-col items-center hover:cursor-pointer">
       <img
@@ -36,8 +41,12 @@ const clickOnFile = (e: MouseEvent) => {
          "
          alt="" />
       <p
-         :class="state.selectedFiles.includes(file.id)? 'overflow-visible bg-emerald-300 h-auto' : ''"
-         class="overflow-hidden rounded-md p-1 h-14 break-all">
+         :class="
+            state.selectedFiles.includes(file.id)
+               ? 'h-auto overflow-visible bg-emerald-300'
+               : ''
+         "
+         class="h-14 overflow-hidden break-all rounded-md p-1">
          {{ file.name }}
       </p>
    </div>

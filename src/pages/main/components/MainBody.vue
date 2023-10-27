@@ -10,12 +10,15 @@ import { useToast } from "vue-toastification";
 import { DELETE_FILES_ACTION } from "../../../store/actions-types";
 import PathComponent from "./ui/PathComponent.vue";
 import FilterSection from "./ui/FilterSection.vue";
+import FileContent from "./FileContent.vue";
 
 const { dispatch, state } = useStore(key);
 
 const toast = useToast();
 const activeModal = ref(false);
+const isActiveWindow = ref(false);
 const view = ref<"table" | "icons">("icons");
+const openFileId = ref<string>();
 
 async function deleteFilesHandler() {
    dispatch(DELETE_FILES_ACTION, state.selectedFiles).catch(() =>
@@ -29,12 +32,14 @@ function toggleModal() {
 function toggleView() {
    view.value === "icons" ? (view.value = "table") : (view.value = "icons");
 }
+function openFile(fileId: string) {
+   openFileId.value = fileId;
+   isActiveWindow.value = true
+}
 </script>
 
 <template v-if="files">
-   <FilterSection
-      :view="view"
-      @change-view="toggleView"/>
+   <FilterSection :view="view" @change-view="toggleView" />
    <MyModal
       :active="activeModal"
       @close-modal="toggleModal"
@@ -42,7 +47,10 @@ function toggleView() {
       :text="'Delete this files?'" />
    <PathComponent />
    <Table v-if="view === 'table'" class="mt-4" />
-   <IconsView v-else />
-   <MainBodyFooter
-      @click-on-delete="activeModal = true" />
+   <IconsView v-else @open-file="openFile" />
+   <FileContent
+      v-if="isActiveWindow"
+      @close="isActiveWindow = false"
+      :file-id="openFileId" />
+   <MainBodyFooter @click-on-delete="activeModal = true" />
 </template>
