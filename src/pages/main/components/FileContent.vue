@@ -1,35 +1,55 @@
 <script setup lang="ts">
-import axios from "axios";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useToast } from "vue-toastification";
+import apiService from "../../../services/apiService";
+import axios from "axios";
 
-const content = ref();
+const content = ref<string | undefined>();
+
+const sizes = [8, 10, 12, 14, 16, 18, 22, 26, 32, 36, 40, 44, 48, 52, 58];
 
 const props = defineProps<{ fileId?: string }>();
 const toast = useToast();
+const fontSize = ref(18);
 const wasChanged = ref(false);
 const emit = defineEmits<{ (e: "close"): void }>();
 
 onBeforeMount(async () => {
    try {
-      const response = await axios.get(
-         `http://localhost:3333/files/${props.fileId}`,
-         {
-            headers: {
-               Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-            },
-         },
-      );
-      content.value = JSON.stringify(response.data);
+      if (!props.fileId) return;
+      const data = await apiService.getFileContent(props.fileId);
+      content.value = data;
    } catch (error) {
       toast.error("Error with file");
    }
 });
-watch(() => content.value, (_, oldValue) => {
-   if (oldValue !== undefined) {
-      wasChanged.value = true
+
+const saveChangeEvent = async () => {
+   if (wasChanged) {
+      try {
+         if (!props.fileId) return;
+         const response = await axios.put(
+            `http://localhost:3333/files/${props.fileId}`,
+            { content: content.value },
+            {
+               headers: {
+                  Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+               },
+            },
+         );
+         console.log(response.data);
+         toast.success("Changes was saved");
+      } catch (error) {}
    }
-})
+};
+
+const inputHandler = (e: Event) => {
+   const target = e.target as HTMLTextAreaElement;
+   if (!wasChanged.value) {
+      wasChanged.value = true;
+   }
+   content.value = target.value;
+};
 </script>
 
 <template>
@@ -42,13 +62,22 @@ watch(() => content.value, (_, oldValue) => {
          <div
             class="flex h-8 justify-between rounded-tl-md rounded-tr-md bg-gray-800">
             <div>
-               <button 
-                  @click="console.log(content)"
+               <button
+                  @click="saveChangeEvent"
                   :disabled="!wasChanged"
-                  :class="wasChanged ? 'bg-emerald-400' : 'bg-gray-600'"
+                  :class="wasChanged ? 'bg-emerald-500' : 'bg-gray-600'"
                   class="h-full rounded-tl-md px-2 transition-colors">
                   Save changes
                </button>
+            </div>
+            <div class="flex h-full items-center">
+               <select
+                  class="bg-gray-400 px-2 hover:cursor-pointer"
+                  v-model="fontSize">
+                  <option v-for="size of sizes" :key="size" :value="size">
+                     {{ size }}px
+                  </option>
+               </select>
             </div>
             <div @click="emit('close')">
                <img
@@ -56,15 +85,17 @@ watch(() => content.value, (_, oldValue) => {
                   class="w-8 rounded-tr-md bg-gray-600 p-1 transition-colors hover:cursor-pointer hover:bg-red-500" />
             </div>
          </div>
-         <div class="h-full">
+         <div class="h-full bg-gray-200">
             <textarea
-               @change="console.log(1)"
+               :style="{ fontSize: `${fontSize}px` }"
                v-if="content"
-               v-model="content"
-               class="h-full w-full resize-none border-none bg-gray-200 p-1 outline-none selection:bg-emerald-400 focus:outline-none">
-            </textarea>
-            <p v-else>LOADING</p>
+               @input="inputHandler"
+               class="h-full w-full resize-none border-none bg-gray-200 p-1 outline-none selection:bg-emerald-400 focus:outline-none"
+               >{{ content }}</textarea
+            >
          </div>
       </div>
    </div>
 </template>
+
+<style scoped></style>

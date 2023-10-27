@@ -23,14 +23,15 @@ const clickOnFile = (e: MouseEvent) => {
 const openFile = () => {
    emit("openFile", file.id);
 };
-
 </script>
 
 <template>
    <div
       @click="clickOnFile"
       @dblclick="
-         file.type === 'dir' ? commit(CHANGE_CURRENT_FOLDER, file.id) : openFile()
+         file.type === 'dir'
+            ? commit(CHANGE_CURRENT_FOLDER, file.id)
+            : openFile()
       "
       class="max-h-30 relative flex select-none flex-col items-center hover:cursor-pointer">
       <img

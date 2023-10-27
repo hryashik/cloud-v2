@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, isAxiosError } from "axios";
 import {
    LoginDto,
    SignupDto,
@@ -171,21 +171,45 @@ class ApiService {
 
    async updateUserInfo(userData: updateUserDto) {
       try {
-         const { data } = await axios.patch<UserInfoType>(`${this.url}/auth/user`, userData, {
-            headers: {
-               Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+         const { data } = await axios.patch<UserInfoType>(
+            `${this.url}/auth/user`,
+            userData,
+            {
+               headers: {
+                  Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+               },
             },
-         });
+         );
          return data;
       } catch (error) {
          if (error instanceof AxiosError) {
             const statusCode = error.response?.status as number;
-            if (statusCode === 401) throw new ApiError("Unauthorized", statusCode);
-            if (statusCode === 403) throw new ApiError("Credentials is taken", statusCode);
+            if (statusCode === 401)
+               throw new ApiError("Unauthorized", statusCode);
+            if (statusCode === 403)
+               throw new ApiError("Credentials is taken", statusCode);
          } else {
-            throw new Error("Some error")
+            throw new Error("Some error");
          }
-         throw new Error("")
+         throw new Error("");
+      }
+   }
+
+   async getFileContent(fileId: string) {
+      try {
+         const response = await axios.get(`${this.url}/files/${fileId}`, {
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+            },
+         });
+         return response.data;
+      } catch (error) {
+         if (isAxiosError(error)) {
+            const statusCode = error.response?.status as number;
+            throw new ApiError("Some error", statusCode);
+         } else {
+            throw new Error();
+         }
       }
    }
 
