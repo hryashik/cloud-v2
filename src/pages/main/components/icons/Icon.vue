@@ -6,6 +6,7 @@ import {
    CHANGE_CURRENT_FOLDER,
    SELECT_FILE,
 } from "../../../../store/mutations-types";
+import { computed } from "vue";
 
 const { commit, state } = useStore(key);
 const { file } = defineProps<{
@@ -23,6 +24,20 @@ const clickOnFile = (e: MouseEvent) => {
 const openFile = () => {
    emit("openFile", file.id);
 };
+
+const iconsObj = computed(() => ({
+   ".png": "assets/image-icon.png",
+   ".jpg": "assets/image-icon.png",
+   dir: "assets/folder.png",
+   ".json": "assets/file-icon.png",
+   ".txt": "assets/file-icon.png",
+   ".gif": "assets/image-icon.png",
+}));
+
+const logo = computed(() => {
+   //@ts-ignore
+   return iconsObj.value[file.type];
+});
 </script>
 
 <template>
@@ -37,10 +52,8 @@ const openFile = () => {
       <img
          :class="state.selectedFiles.includes(file.id) ? 'bg-emerald-200' : ''"
          class="w-11 rounded-md"
-         :src="
-            file.type === 'dir' ? 'assets/folder.png' : 'assets/file-icon.png'
-         "
-         alt="" />
+         :src="logo"
+         :alt="';('" />
       <p
          :class="
             state.selectedFiles.includes(file.id)

@@ -13,15 +13,23 @@ import {
 } from "../../../store/actions-types";
 import PathComponent from "./ui/PathComponent.vue";
 import FilterSection from "./ui/FilterSection.vue";
+import ImageManager from "./ImageManager.vue";
 import FileContent from "./FileContent.vue";
 
 const { dispatch, state } = useStore(key);
 
 const toast = useToast();
 const activeModal = ref(false);
-const isActiveWindow = ref(false);
+const activeWindow = ref<{
+   status: boolean;
+   type: "text" | "img";
+   fileId: string | undefined;
+}>({
+   status: false,
+   type: "text",
+   fileId: undefined,
+});
 const view = ref<"table" | "icons">("icons");
-const openFileId = ref<string>();
 
 async function deleteFilesHandler() {
    dispatch(DELETE_FILES_ACTION, state.selectedFiles).catch(() =>
@@ -36,8 +44,12 @@ function toggleView() {
    view.value === "icons" ? (view.value = "table") : (view.value = "icons");
 }
 function openFile(fileId: string) {
-   openFileId.value = fileId;
-   isActiveWindow.value = true;
+   const file = state.files.find(file => file.id === fileId)!!;
+   if (file.type === ".jpg" || file.type === ".png" || file.type === ".gif") {
+      activeWindow.value = { fileId, status: true, type: "img" };
+   } else {
+      activeWindow.value = { fileId, status: true, type: "text" };
+   }
 }
 onBeforeMount(() => {
    dispatch(GET_FILES_ACTION);
@@ -55,8 +67,12 @@ onBeforeMount(() => {
    <Table v-if="view === 'table'" class="mt-4" @open-file="openFile" />
    <IconsView v-else @open-file="openFile" />
    <FileContent
-      v-if="isActiveWindow"
-      @close="isActiveWindow = false"
-      :file-id="openFileId" />
+      v-if="activeWindow.type === 'text' && activeWindow.status"
+      @close="activeWindow.status = false"
+      :file-id="activeWindow.fileId" />
+   <ImageManager
+      v-if="activeWindow.type === 'img' && activeWindow.status"
+      :file-id="activeWindow.fileId"
+      @close="activeWindow.status = false" />
    <MainBodyFooter @click-on-delete="activeModal = true" />
 </template>

@@ -164,7 +164,8 @@ class ApiService {
       } catch (error) {
          if (error instanceof AxiosError) {
             const statusCode = error.response?.status as number;
-            console.log(statusCode);
+            if (statusCode === 413)
+               throw new ApiError("File size or name is too big", 413);
          }
       }
    }

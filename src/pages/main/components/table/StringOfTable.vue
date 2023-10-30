@@ -27,9 +27,9 @@ const fileSize = computed(() => {
    if (file.size < 1024) {
       return `${file.size.toString()} b`;
    } else if (file.size >= 1024 && file.size < 1024 * 1024) {
-      return `${(file.size / 1024).toFixed(2)} Kb`;
+      return `${(file.size / 1024).toFixed(1)} Kb`;
    } else {
-      return `${(file.size / (1024 * 1024)).toFixed(2)} Mb`;
+      return `${(file.size / (1024 * 1024)).toFixed(1)} Mb`;
    }
 });
 const openFile = () => {

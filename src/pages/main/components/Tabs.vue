@@ -25,6 +25,7 @@ async function submitHandler(e: Event) {
    const target = e.target as HTMLInputElement;
    const files = target.files;
    if (files) {
+      console.log(files[0].name.length)
       try {
          formdata.append("files", files[0], encodeURI(files[0].name));
          const data: saveFilesDto = {
@@ -34,8 +35,9 @@ async function submitHandler(e: Event) {
          await dispatch(SAVE_FILES_ACTION, data);
          toast.success("the file was saved successfully");
       } catch (error) {
-         toast.error("Error")
-         console.log(error);
+         if (error instanceof ApiError) {
+            toast.error(error.message)
+         }
       }
    }
 }

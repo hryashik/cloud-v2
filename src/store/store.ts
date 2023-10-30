@@ -147,7 +147,9 @@ export const store = createStore<State>({
             await apiService.saveFiles(payload);
             const files = await apiService.getAllFiles();
             commit(GET_ALL_FILES, files);
-         } catch (error) {}
+         } catch (error) {
+            throw error
+         }
       },
       async [UPDATE_USER_ACTION]({ commit }, payload: updateUserDto) {
          try {
