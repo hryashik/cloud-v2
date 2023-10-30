@@ -2,7 +2,6 @@
 import { onBeforeMount, ref } from "vue";
 import { useToast } from "vue-toastification";
 import apiService from "../../../services/apiService";
-import axios from "axios";
 
 const content = ref<string | undefined>();
 
@@ -27,19 +26,12 @@ onBeforeMount(async () => {
 const saveChangeEvent = async () => {
    if (wasChanged) {
       try {
-         if (!props.fileId) return;
-         const response = await axios.put(
-            `http://localhost:3333/files/${props.fileId}`,
-            { content: content.value },
-            {
-               headers: {
-                  Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-               },
-            },
-         );
-         console.log(response.data);
+         if (!props.fileId || !content.value) return;
+         await apiService.saveChangesFile(props.fileId, content.value);
          toast.success("Changes was saved");
-      } catch (error) {}
+      } catch (error) {
+         toast.error("Changes was not saved");
+      }
    }
 };
 

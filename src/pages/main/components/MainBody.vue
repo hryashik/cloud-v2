@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import MainBodyFooter from "./MainBodyFooter.vue";
 import IconsView from "./icons/IconsView.vue";
 import MyModal from "../../../components/ui/MyModal.vue";
@@ -7,7 +7,7 @@ import Table from "./table/Table.vue";
 import { useStore } from "vuex";
 import { key } from "../../../store/store";
 import { useToast } from "vue-toastification";
-import { DELETE_FILES_ACTION } from "../../../store/actions-types";
+import { DELETE_FILES_ACTION, GET_FILES_ACTION } from "../../../store/actions-types";
 import PathComponent from "./ui/PathComponent.vue";
 import FilterSection from "./ui/FilterSection.vue";
 import FileContent from "./FileContent.vue";
@@ -36,6 +36,9 @@ function openFile(fileId: string) {
    openFileId.value = fileId;
    isActiveWindow.value = true
 }
+onBeforeMount(() => {
+   dispatch(GET_FILES_ACTION);
+})
 </script>
 
 <template v-if="files">

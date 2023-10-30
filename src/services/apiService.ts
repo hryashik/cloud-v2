@@ -213,6 +213,19 @@ class ApiService {
       }
    }
 
+   async saveChangesFile(fileId: string, content: string) {
+      try {
+         await axios.put(
+            `http://localhost:3333/files/${fileId}`,
+            { content: content },
+            {
+               headers: {
+                  Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+               },
+            },
+         );
+      } catch (error) {}
+   }
 }
 
 const apiService = new ApiService(import.meta.env.VITE_BASE_URL);
