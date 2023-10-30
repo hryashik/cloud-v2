@@ -1,10 +1,18 @@
 <script lang="ts" setup>
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { useToast } from "vue-toastification";
+import { useStore } from "vuex";
+import { key } from "../../../store/store";
 
 const props = defineProps<{ fileId: string | undefined }>();
 const dataImg = ref<string | undefined>();
 const toast = useToast();
+
+const { state } = useStore(key);
+
+const fileName = computed(
+   () => state.files.find(file => file.id === props.fileId)?.name,
+);
 
 const emit = defineEmits<{ (e: "close"): void }>();
 
@@ -34,7 +42,11 @@ onBeforeMount(async () => {
          class="absolute left-0 top-0 h-screen w-screen bg-gray-600 opacity-80"></div>
       <div
          class="z-90 absolute left-1/2 top-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray-300 md:w-1/2">
-         <div class="flex h-8 rounded-tl-md rounded-tr-md bg-gray-800">
+         <div
+            class="flex h-8 justify-center rounded-tl-md rounded-tr-md bg-gray-800">
+            <div class="ml-auto flex items-center overflow-hidden text-white">
+               {{ fileName }}
+            </div>
             <div @click="emit('close')" class="ml-auto">
                <img
                   src="assets/close-icon.svg"

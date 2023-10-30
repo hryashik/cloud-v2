@@ -1,17 +1,24 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { useToast } from "vue-toastification";
 import apiService from "../../../services/apiService";
+import { useStore } from "vuex";
+import { key } from "../../../store/store";
 
 const content = ref<string | undefined>();
 
 const sizes = [8, 10, 12, 14, 16, 18, 22, 26, 32, 36, 40, 44, 48, 52, 58];
 
 const props = defineProps<{ fileId?: string }>();
+const { state } = useStore(key);
 const toast = useToast();
 const fontSize = ref(18);
 const wasChanged = ref(false);
 const emit = defineEmits<{ (e: "close"): void }>();
+
+const fileName = computed(
+   () => state.files.find(file => file.id === props.fileId)?.name,
+);
 
 onBeforeMount(async () => {
    try {
@@ -62,15 +69,21 @@ const inputHandler = (e: Event) => {
                   Save changes
                </button>
             </div>
-            <div class="flex h-full items-center">
-               <select
-                  class="bg-gray-400 px-2 hover:cursor-pointer"
-                  v-model="fontSize">
-                  <option v-for="size of sizes" :key="size" :value="size">
-                     {{ size }}px
-                  </option>
-               </select>
+            <div class="flex">
+               <div class="flex items-center overflow-hidden text-gray-100 mr-4">
+                  {{ fileName }}
+               </div>
+               <div class="flex h-full items-center">
+                  <select
+                     class="bg-gray-400 px-2 hover:cursor-pointer"
+                     v-model="fontSize">
+                     <option v-for="size of sizes" :key="size" :value="size">
+                        {{ size }}px
+                     </option>
+                  </select>
+               </div>
             </div>
+
             <div @click="emit('close')">
                <img
                   src="assets/close-icon.svg"

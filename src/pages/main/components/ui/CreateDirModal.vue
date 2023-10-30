@@ -33,7 +33,7 @@ function modalHandler(e: MouseEvent) {
    <dialog ref="modal" @click="modalHandler" class="rounded-md p-4 shadow-lg">
       <div class="flex w-[300px] flex-col items-center justify-around">
          <p class="mb-2 text-lg">Directory name</p>
-         <input v-model="input" class="mb-4 px-4 py-2 shadow-md rounded-md"/>
+         <input v-model="input" class="mb-4 rounded-md px-4 py-2 shadow-md" />
          <div class="flex w-full justify-evenly">
             <button
                @click="emit('agree', input)"
@@ -50,4 +50,19 @@ function modalHandler(e: MouseEvent) {
    </dialog>
 </template>
 
-<style scoped></style>
+<style scoped>
+dialog {
+   animation-duration: 1s;
+   animation-name: slidein;
+}
+
+@keyframes slidein {
+   from {
+      opacity: 0%;
+   }
+
+   to {
+      opacity: 100%;
+   }
+}
+</style>
