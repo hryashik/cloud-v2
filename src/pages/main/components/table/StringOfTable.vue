@@ -13,6 +13,7 @@ const { state, commit } = useStore(key);
 
 const emit = defineEmits<{
    (e: "agree"): void;
+   (e: "openFile", fileId: string): void;
 }>();
 
 function clickOnFile(e: MouseEvent) {
@@ -31,13 +32,18 @@ const fileSize = computed(() => {
       return `${(file.size / (1024 * 1024)).toFixed(2)} Mb`;
    }
 });
+const openFile = () => {
+   emit("openFile", file.id);
+};
 </script>
 
 <template>
    <div
       @click="clickOnFile"
       @dblclick="
-         file.type === 'dir' ? commit(CHANGE_CURRENT_FOLDER, file.id) : ''
+         file.type === 'dir'
+            ? commit(CHANGE_CURRENT_FOLDER, file.id)
+            : openFile()
       "
       class="main relative mb-2 grid select-none justify-items-center py-2 text-lg hover:cursor-pointer"
       :class="

@@ -7,7 +7,10 @@ import Table from "./table/Table.vue";
 import { useStore } from "vuex";
 import { key } from "../../../store/store";
 import { useToast } from "vue-toastification";
-import { DELETE_FILES_ACTION, GET_FILES_ACTION } from "../../../store/actions-types";
+import {
+   DELETE_FILES_ACTION,
+   GET_FILES_ACTION,
+} from "../../../store/actions-types";
 import PathComponent from "./ui/PathComponent.vue";
 import FilterSection from "./ui/FilterSection.vue";
 import FileContent from "./FileContent.vue";
@@ -34,11 +37,11 @@ function toggleView() {
 }
 function openFile(fileId: string) {
    openFileId.value = fileId;
-   isActiveWindow.value = true
+   isActiveWindow.value = true;
 }
 onBeforeMount(() => {
    dispatch(GET_FILES_ACTION);
-})
+});
 </script>
 
 <template v-if="files">
@@ -49,7 +52,7 @@ onBeforeMount(() => {
       @agree="deleteFilesHandler"
       :text="'Delete this files?'" />
    <PathComponent />
-   <Table v-if="view === 'table'" class="mt-4" />
+   <Table v-if="view === 'table'" class="mt-4" @open-file="openFile" />
    <IconsView v-else @open-file="openFile" />
    <FileContent
       v-if="isActiveWindow"

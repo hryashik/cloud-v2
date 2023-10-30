@@ -8,7 +8,7 @@ import { FileType } from "../../../../types/file";
 
 const { state, getters } = useStore(key);
 
-const emit = defineEmits<{ (e: "clickOnFile", payload: string): void }>();
+const emit = defineEmits<{ (e: "openFile", payload: string): void }>();
 
 const currentFolder = computed(() => {
    if (state.currentDir === undefined) {
@@ -33,6 +33,7 @@ const currentFolder = computed(() => {
       <StringOfTable
          v-for="element of currentFolder.files"
          :key="element.id"
-         :file="element" />
+         :file="element"
+         @open-file="payload => emit('openFile', payload)" />
    </div>
 </template>
