@@ -12,10 +12,10 @@ import {
    GET_FILES_ACTION,
    SAVE_FILES_ACTION,
 } from "../../../store/actions-types";
-
+import { CHANGE_FILTER } from "../../../store/mutations-types";
 const route = useRoute();
 const toast = useToast();
-const { dispatch } = useStore(key);
+const { dispatch, commit } = useStore(key);
 const modalDirActive = ref<boolean>(false);
 
 async function submitHandler(e: Event) {
@@ -25,7 +25,7 @@ async function submitHandler(e: Event) {
    const target = e.target as HTMLInputElement;
    const files = target.files;
    if (files) {
-      console.log(files[0].name.length)
+      console.log(files[0].name.length);
       try {
          formdata.append("files", files[0], encodeURI(files[0].name));
          const data: saveFilesDto = {
@@ -36,7 +36,7 @@ async function submitHandler(e: Event) {
          toast.success("the file was saved successfully");
       } catch (error) {
          if (error instanceof ApiError) {
-            toast.error(error.message)
+            toast.error(error.message);
          }
       }
    }
@@ -68,7 +68,8 @@ async function createDir(name: string) {
       <MyInput
          class="w-1/2 rounded-md shadow-md"
          :type="'text'"
-         :placeholder="'find'" />
+         :placeholder="'find'"
+         @input="e => commit(CHANGE_FILTER, e)" />
       <form class="ml-2" @change="submitHandler" enctype="multipart/form-data">
          <label for="fileinput" class="block h-full cursor-pointer">
             <div

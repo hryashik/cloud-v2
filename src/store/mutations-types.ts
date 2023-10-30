@@ -9,3 +9,4 @@ export const SAVE_FILES = "SAVE_FILES";
 export const UPDATE_USER_INFO = "UPDATE_USER_INFO";
 export const SELECT_FILE = "SELECT_FILE";
 export const CLEAR_SELECTED_FILES = "CLEAR_SELECTED_FILES";
+export const CHANGE_FILTER = "CHANGE_FILTER";

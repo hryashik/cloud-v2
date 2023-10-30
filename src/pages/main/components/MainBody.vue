@@ -54,25 +54,30 @@ function openFile(fileId: string) {
 onBeforeMount(() => {
    dispatch(GET_FILES_ACTION);
 });
+onBeforeMount(() => {
+   
+})
 </script>
 
 <template v-if="files">
-   <FilterSection :view="view" @change-view="toggleView" />
-   <MyModal
-      :active="activeModal"
-      @close-modal="toggleModal"
-      @agree="deleteFilesHandler"
-      :text="'Delete this files?'" />
-   <PathComponent />
-   <Table v-if="view === 'table'" class="mt-4" @open-file="openFile" />
-   <IconsView v-else @open-file="openFile" />
-   <FileContent
-      v-if="activeWindow.type === 'text' && activeWindow.status"
-      @close="activeWindow.status = false"
-      :file-id="activeWindow.fileId" />
-   <ImageManager
-      v-if="activeWindow.type === 'img' && activeWindow.status"
-      :file-id="activeWindow.fileId"
-      @close="activeWindow.status = false" />
-   <MainBodyFooter @click-on-delete="activeModal = true" />
+   <div id="board">
+      <FilterSection :view="view" @change-view="toggleView" />
+      <MyModal
+         :active="activeModal"
+         @close-modal="toggleModal"
+         @agree="deleteFilesHandler"
+         :text="'Delete this files?'" />
+      <PathComponent />
+      <Table v-if="view === 'table'" class="mt-4" @open-file="openFile" />
+      <IconsView v-else @open-file="openFile" />
+      <FileContent
+         v-if="activeWindow.type === 'text' && activeWindow.status"
+         @close="activeWindow.status = false"
+         :file-id="activeWindow.fileId" />
+      <ImageManager
+         v-if="activeWindow.type === 'img' && activeWindow.status"
+         :file-id="activeWindow.fileId"
+         @close="activeWindow.status = false" />
+      <MainBodyFooter @click-on-delete="activeModal = true" />
+   </div>
 </template>

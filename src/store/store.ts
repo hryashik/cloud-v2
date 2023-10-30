@@ -4,6 +4,7 @@ import { UserInfoType } from "../types/user";
 import { FileType } from "../types/file";
 import {
    CHANGE_CURRENT_FOLDER,
+   CHANGE_FILTER,
    CHANGE_SORT,
    CLEAR_SELECTED_FILES,
    DEFINE_USER,
@@ -34,6 +35,7 @@ export interface State {
    currentDir: FileType | undefined;
    sortType: SortType;
    selectedFiles: string[];
+   filter: string;
 }
 
 export interface TodoGetters {
@@ -51,19 +53,22 @@ export const store = createStore<State>({
       currentDir: undefined,
       sortType: "name",
       selectedFiles: [],
+      filter: "",
    },
    getters: {
       files: state => {
          const sort = state.sortType;
-         return state.files.sort((a, b) => {
-            const sA = a[sort];
-            const sB = b[sort];
-            if (sA < sB) {
-               return -1;
-            } else {
-               return 1;
-            }
-         });
+         return state.files
+            .sort((a, b) => {
+               const sA = a[sort];
+               const sB = b[sort];
+               if (sA < sB) {
+                  return -1;
+               } else {
+                  return 1;
+               }
+            })
+            .filter(file => file.name.toLowerCase().includes(state.filter.toLowerCase()));
       },
    },
    mutations: {
@@ -81,7 +86,9 @@ export const store = createStore<State>({
          state.files = payload;
       },
       [DELETE_FILES](state) {
-         state.files = state.files.filter(file => !state.selectedFiles.includes(file.id));
+         state.files = state.files.filter(
+            file => !state.selectedFiles.includes(file.id),
+         );
          state.selectedFiles = [];
       },
       ["MUTATE_STATE"](state, payload: FileType[]) {
@@ -119,6 +126,9 @@ export const store = createStore<State>({
       [CLEAR_SELECTED_FILES](state) {
          state.selectedFiles = [];
       },
+      [CHANGE_FILTER](state, payload: string) {
+         state.filter = payload;
+      },
    },
    actions: {
       async [GET_FILES_ACTION]({ commit }) {
@@ -148,7 +158,7 @@ export const store = createStore<State>({
             const files = await apiService.getAllFiles();
             commit(GET_ALL_FILES, files);
          } catch (error) {
-            throw error
+            throw error;
          }
       },
       async [UPDATE_USER_ACTION]({ commit }, payload: updateUserDto) {
